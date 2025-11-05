@@ -185,7 +185,7 @@ function updateBotPlayingStatus(data){
 }
 
 function changePage(loc) {
-    window.location.href = loc;
+    window.location.href = `${window.location.origin}/ambience-inator/${loc}`;
 }
 
 // ====== WebSocket Command Sender ======
