@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ambience-inator Playback</title>
+    <link rel="stylesheet" href="public/style.css">
+    <script src="public/playback.js" defer></script>
+</head>
+<body>
+    <h2>Playback Control</h2>
+
+    <div class="playback-container">
+        <div class="playback-panel">
+            <h3>Music Playlists</h3>
+            <div id="playlistList" class="playback-list"></div>
+            <div class="control-bar">
+                <button id="musicPlayPause" class="control-btn">Play</button>
+                <div class="volume-control">
+                    <label for="musicVolume">Volume</label>
+                    <input id="musicVolume" type="range" min="0" max="100" value="100">
+                </div>
+            </div>
+            
+            <div class="control-bar secondary">
+                <button id="musicPrev" class="control-btn small">Previous</button>
+                <button id="musicShuffle" class="control-btn small">Shuffle</button>
+                <button id="musicLoop" class="control-btn small">Loop</button>
+                <button id="musicSkip" class="control-btn small">Skip</button>
+            </div>
+        </div>
+
+        <div class="playback-panel">
+            <h3>Ambience</h3>
+            <div id="ambienceList" class="playback-list"></div>
+            <div class="control-bar">
+                <button id="ambiencePlayPause" class="control-btn">Play</button>
+                <div class="volume-control">
+                    <label for="ambienceVolume">Volume</label>
+                    <input id="ambienceVolume" type="range" min="0" max="100" value="25">
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+    
+    <div class="now-playing-row">
+        <div class="now-playing">
+            <h3>Now Playing</h3>
+            <p id="musicNowPlaying" class="now-text">None</p>
+        </div>
+        <div class="now-playing">
+            <h3>Now Playing</h3>
+            <p id="ambienceNowPlaying" class="now-text">None</p>
+        </div>
+    </div>
+    
+    <div class="vc-toggle">
+        <button id="joinVCBtn" class="control-btn active">Join VC</button>
+        <button id="leaveVCBtn" class="control-btn">Leave VC</button>
+    </div>
+    <button class="floating" onclick="window.location.href='/'">Back</button>
+</body>
+</html>

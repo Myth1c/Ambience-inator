@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Authenticate - Ambience-inator</title>
+    <link rel="stylesheet" href="public/style.css">
+    <style>
+        .auth-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            height: 100vh;
+        }
+        input {
+            padding: 8px;
+            width: 240px;
+            text-align: center;
+        }
+        button {
+            padding: 8px 16px;
+        }
+    </style>
+    <script>
+        async function submitAuth() {
+            const key = document.getElementById("authKey").value.trim();
+            if (!key) return alert("Enter the key");
+
+            // Save temporarily to localStorage
+            localStorage.setItem("ambience_auth_key", key);
+
+            // Verify key with server
+            const res = await fetch("/auth_check", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key })
+            });
+            const data = await res.json();
+
+            if (data.ok) {
+                window.location.href = "/";
+            } else {
+                alert("Invalid key");
+                localStorage.removeItem("ambience_auth_key");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="auth-box">
+        <h2>Enter Access Key</h2>
+        <input id="authKey" type="password" placeholder="Access Key">
+        <button onclick="submitAuth()">Submit</button>
+    </div>
+</body>
+</html>

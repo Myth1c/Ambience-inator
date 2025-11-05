@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ambience-inator 5.0</title>
+    <link rel="stylesheet" href="public/style.css"/>
+    <script src="public/index.js"></script>
+</head>
+<body>
+    <h1>Ambience-inator 5.0</h1>
+    
+    <!-- Navigation Menu -->
+    <div id="navMenu" class="nav-menu">
+        <h2>Navigation</h2>
+        <button onclick="changePage('/play')" class="nav-btn">Audio Playback</button>
+        <button onclick="changePage('/edit')" class="nav-btn">Edit Playlists</button>
+        <button onclick="changePage('/setup')" class="nav-btn">Setup</button>
+        <button id="startBotBtn" class="nav-btn">Start Bot</button>
+        <button id="stopBotBtn" class="nav-btn">Stop Bot</button>
+        <button id="rebootBotBtn" class="nav-btn">Reboot Bot</button>
+    </div>
+        
+    <pre id="statusBox" class="status-box">
+        <h3>Status</h3>
+        <p id="statusMessage">Connecting to bot...</p>
+    </pre>
+    
+</body>
+</html>

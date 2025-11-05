@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Ambience-inator Setup</title>
+  <link rel="stylesheet" href="public/style.css"/>
+  <script src="public/setup.js" defer></script>
+</head>
+<body>
+  
+  <h2>Bot Setup</h2>
+  
+  <div class="setup-form">
+      <label>Voice Channel ID:</label>
+      <input id="vcInput" type="text" placeholder="e.g. 123456789012345678">
+
+      <label>Text Channel ID:</label>
+      <input id="tcInput" type="text" placeholder="e.g. 234567890123456789">
+
+      <button id="saveBtn">Save Configuration</button>
+      <div id="statusMessage" class="status-message"></div>
+      
+  </div>
+  
+    <!-- === Discord Message Panel === -->
+  <div class="setup-panel">
+      <h3>Discord Message Controls</h3>
+      <div class="button-row">
+          <button id="updateQueueBtn">Update Queue Message</button>
+          <button id="updateUILinkBtn">Update UI Link</button>
+      </div>
+  </div>
+  
+  <button class="floating" onclick="window.location.href='/'">Back</button>
+  
+</body>
+</html>

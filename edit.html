@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Edit Playlist - Ambience-inator 5.0</title>
+    <link rel="stylesheet" href="public/style.css">
+    <script src="public/edit.js" defer></script>
+</head>    
+<body>
+    
+    <div class="mode-toggle-container">
+        <div class="mode-switch">
+            <div class="mode-highlight"></div>
+            <button id="musicModeBtn" class="mode-option active" onclick="switchMode('music')">Music</button>
+            <button id="ambienceModeBtn" class="mode-option" onclick="switchMode('ambience')">Ambience</button>
+        </div>
+    </div>
+    
+    <h2>Edit Playlist</h2>
+    
+    <div class="playlist-controls">
+        <label for="playlistSelect">Select Playlist:</label>
+        <select id="playlistSelect">
+            <option value="" disabled selected>-- Choose a playlist --</option>
+        </select>
+        <button id="newPlaylistBtn">+ New Playlist</button>        
+    </div>
+    
+    <div id="playlistPanel" class="playlist-panel">
+        <h3 id="playlistTitle" class="playlist-title">Select or create a playlist</h3>
+        
+        <div class="song-controls">
+            <input id="songTitle" placeholder="Song Title">
+            <button id="addSongBtn">Add Song</button>
+            <input id="songUrl" placeholder="YouTube URL">
+            <button id="removeSongBtn">Remove Selected</button>
+        </div>        
+        
+        <ul id="songList" class="song-list"></ul>        
+    </div>
+    
+    <div class="actions">
+        <button id="saveBtn">Save Changes</button>
+        <button class="floating" onclick="window.location.href='/'">Back</button>
+    </div>
+    
+    <div id="statusMessage" class="status-message"></div>
+    
+</body>
+</html>
