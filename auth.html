@@ -34,7 +34,8 @@
             const res = await fetch("https://ambienceinator-web.onrender.com/auth_check", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ key })
+                body: JSON.stringify({ key }),
+                credentials: "include"
             });
             const data = await res.json();
 
