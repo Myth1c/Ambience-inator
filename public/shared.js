@@ -161,6 +161,7 @@ function handleIncomingCommand(data) {
             if (typeof window.onReturnStatus === "function")
                 window.onReturnStatus("online");
             break;
+        
         // === Broadcasts / server messages ===
         case "broadcast":
             console.log("[WS] Broadcast:", data.message || data);
