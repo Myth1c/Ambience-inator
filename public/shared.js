@@ -30,7 +30,7 @@ async function authCheck() {
         const res = await fetch(`${API_BASE}/auth_check`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key }),
+            body: JSON.stringify({}),
             credentials: "include"
         });
 
