@@ -251,9 +251,9 @@ function showStatus(message, type = "success", statusElement = null){
     
     // Reset classes
     statusElement.className = "status-message";
-    if (type === "success") el.classList.add("status-success");
-    if (type === "warning") el.classList.add("status-warning");
-    if (type === "error") el.classList.add("status-error");
+    if (type === "success") statusElement.classList.add("status-success");
+    if (type === "warning") statusElement.classList.add("status-warning");
+    if (type === "error") statusElement.classList.add("status-error");
     
     // Fade in
     statusElement.classList.add("show");
