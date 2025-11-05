@@ -19,13 +19,9 @@ let playbackState = {
     in_vc: false
 };
 
-function connectWebSocket() {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
-}
-
 window.onload = () => {
-    connectWebSocket();
+    ws = new WebSocket(`wss://localhost:8080/ws`);  // if local dev
+    // or wss://ambienceinator.onrender.com/ws  (if hosted backend)
     
     ws.onmessage = msg => {
         const data = JSON.parse(msg.data);

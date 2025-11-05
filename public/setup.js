@@ -1,8 +1,8 @@
 let ws;
 
 window.onload = () => {    
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+    ws = new WebSocket(`wss://localhost:8080/ws`);  // if local dev
+    // or wss://ambienceinator.onrender.com/ws  (if hosted backend)
 
     ws.onopen = () => console.log("Connected to WS");
 
