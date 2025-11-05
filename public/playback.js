@@ -43,19 +43,17 @@ window.onload = async () => {
     };
 };
 
-window.onReturnPlaybackState = (ps) => {
-    updateNowPlaying("music", ps["music"]["playlist_name"], ps["music"]["track_name"]);
-    updateNowPlaying("ambience", "Ambience", ps["ambience"]["name"]);
+window.onReturnPlaybackState = () => {
+    updateNowPlaying("music");
+    updateNowPlaying("ambience");
     updateVCButtons();
 }
 
-window.onReturnPlaylists = (ps) => {
-    playlists = ps
+window.onReturnPlaylists = () => {
     populatePlaylistList()
 }
 
-window.onReturnAmbience = (amb) => {
-    ambience = amb
+window.onReturnAmbience = () => {
     populateAmbienceList()
 }
 
@@ -111,7 +109,7 @@ function toggleLoop() {
 }
 
 // ===== Visual Updating =====
-function updateNowPlaying(type, playlist, track) {
+function updateNowPlaying(type) {
     const element = document.getElementById(
         type === "music" ? "musicNowPlaying" : "ambienceNowPlaying"
     );
@@ -119,11 +117,11 @@ function updateNowPlaying(type, playlist, track) {
     line2 = "None";
     
     if (type === "music" && playbackState.music.playing){
-        line1 = `Playlist: ${playlist} / `;
-        line2 = `Title: ${track}`;
+        line1 = `Playlist: ${playbackState.music.playlist_name} / `;
+        line2 = `Title: ${playbackState.music.track_name}`;
     }else if (type === "ambience" && playbackState.ambience.playing){
         line1 = "";
-        line2 = `${track}`;
+        line2 = `${playbackState.ambience.name}`;
     }
     
     fullLine = line1 + line2;
