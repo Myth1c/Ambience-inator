@@ -9,9 +9,6 @@ window.onload = async () => {
     const authed = await authCheck();
     if (!authed) return;
 
-    connectWebSocket((data) => handleMessage(data));  // handled by shared.js
-    console.log("[Playlist] WS Connected");
-
     // Initial request for playlists
     sendCommand("GET_PLAYLISTS");
 

@@ -7,9 +7,6 @@ window.onload = async () => {
     const authed = await authCheck();
     if (!authed) return;
 
-    connectWebSocket(handlePlaybackMessage);
-    console.log("[Playback] WS Connected");
-
     sendCommand("GET_PLAYLISTS");
     sendCommand("GET_AMBIENCE");
     sendCommand("GET_PLAYBACK_STATE");

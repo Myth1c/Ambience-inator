@@ -1,6 +1,4 @@
 // ===== index.js =====
-
-let ws;
 window._botCheckTimer = null;
 
 
@@ -10,8 +8,6 @@ window.onload = async () => {
     const authed = await authCheck();
     if(!authed) return;
         
-    console.log("[WEB] Connected to index");
-    
     // === Button references ===
     const startBtn = document.getElementById("startBotBtn");
     const stopBtn = document.getElementById("stopBotBtn");
