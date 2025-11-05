@@ -238,7 +238,6 @@ window.WS_URL = WS_URL;
 window.ws = ws;
 window.playbackState = playbackState;
 window.sendCommand = sendCommand;
-window.handleMessage = handleMessage;
 window.authCheck = authCheck;
 window.connectWebSocket = connectWebSocket;
 window.updatePlaybackState = updatePlaybackState;
