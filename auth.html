@@ -27,9 +27,6 @@
             const key = document.getElementById("authKey").value.trim();
             if (!key) return alert("Enter the key");
 
-            // Save temporarily to localStorage
-            localStorage.setItem("ambience_auth_key", key);
-
             // Verify key with server
             const res = await fetch("https://ambienceinator-web.onrender.com/auth_check", {
                 method: "POST",
