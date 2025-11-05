@@ -149,7 +149,7 @@ function handleIncomingCommand(data) {
             }
             break;
 
-        // === Heartbeat or live updates ===
+        // === Bot specific heartbeat or live updates ===
         case "state_update":
             const state = data.payload || data.state;
             updatePlaybackState(state);
@@ -157,6 +157,10 @@ function handleIncomingCommand(data) {
                 window.onBotHeartbeat(state);
             break;
 
+        case "bot_hello":
+            if (typeof window.onReturnStatus === "function")
+                window.onReturnStatus("online");
+            break;
         // === Broadcasts / server messages ===
         case "broadcast":
             console.log("[WS] Broadcast:", data.message || data);
@@ -264,7 +268,7 @@ function showStatus(message, type = "success", statusElement = null){
 window.addEventListener("load", () => {
     if (!window.ws || window.ws.readyState > 1) {
         connectWebSocket();
-        startHeartbeat(30000)
+        startHeartbeat(300000)
     }
 });
 
