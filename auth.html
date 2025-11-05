@@ -31,7 +31,7 @@
             localStorage.setItem("ambience_auth_key", key);
 
             // Verify key with server
-            const res = await fetch("/auth_check", {
+            const res = await fetch("https://ambienceinator-web.onrender.com/auth_check", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ key })
