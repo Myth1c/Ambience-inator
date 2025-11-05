@@ -25,7 +25,7 @@ let playbackState = {
 
 // === Auth helper ===
 async function authCheck() {
-    const key = localStorage.getItem("authKey");
+    
     if (!key) {
         console.warn("[WEB] No auth key, redirecting...");
         window.location.href = "./auth.html";
@@ -36,7 +36,8 @@ async function authCheck() {
         const res = await fetch(`${API_BASE}/auth_check`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key })
+            body: JSON.stringify({ key }),
+            credentials: "include"
         });
 
         if (!res.ok) throw new Error("Auth failed");
