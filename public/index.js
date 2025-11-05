@@ -20,8 +20,8 @@ let playbackState = {
 };
 
 window.onload = () => {
-    ws = new WebSocket(`wss://localhost:8080/ws`);  // if local dev
-    // or wss://ambienceinator.onrender.com/ws  (if hosted backend)
+    //ws = new WebSocket(`wss://localhost:8080/ws`);  // if local dev
+    ws = new WebSocke(`wss://ambienceinator-web.onrender.com/ws`) // (if hosted backend)
     
     ws.onmessage = msg => {
         const data = JSON.parse(msg.data);
