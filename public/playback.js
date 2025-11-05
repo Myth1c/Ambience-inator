@@ -43,10 +43,20 @@ window.onload = async () => {
     };
 };
 
-window.onPlaybackStateUpdated = (ps) => {
+window.onReturnPlaybackState = (ps) => {
     updateNowPlaying("music", ps.music.playlist_name, ps.music.track_name);
     updateNowPlaying("ambience", "Ambience", ps.ambience.name);
     updateVCButtons();
+}
+
+window.onReturnPlaylists = (ps) => {
+    playlists = ps
+    populatePlaylistList()
+}
+
+window.onReturnAmbience = (amb) => {
+    ambience = amb
+    populateAmbienceList()
 }
 
 window.onWebSocketConnected = () => {
@@ -100,6 +110,7 @@ function toggleLoop() {
     updateToggleVisual("musicLoop", playbackState.music.loop);
 }
 
+// ===== Visual Updating =====
 function updateNowPlaying(type, playlist, track) {
     const element = document.getElementById(
         type === "music" ? "musicNowPlaying" : "ambienceNowPlaying"

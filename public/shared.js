@@ -84,49 +84,79 @@ function connectWebSocket(onMessageCallback) {
 }
 
 // ===== Global Command Router =====
-function handleIncomingCommand(data){
-    const cmd = data.command;
-    
-    switch(cmd){
-        
-        case "PLAYBACK_STATE":
-            const stateData = Array.isArray(data.state) ? data.state[0] : data.state;
-            updatePlaybackState(stateData);
-            if (typeof window.onBotPlaybackUpdate === "function"){
-                window.onBotPlaybackUpdate(stateData);
+function handleIncomingCommand(data) {
+    const type = data.type || "response";  // default
+    const cmd  = data.command;
+
+    switch (type) {
+        // === Command responses ===
+        case "response":
+            if (!data.ok) {
+                console.warn(`[WS] Command '${cmd}' failed:`, data.error);
+                if (typeof window.onCommandError === "function")
+                    window.onCommandError(cmd, data.error);
+                return;
             }
-            break;
-            
-        case "BOT_STATUS":
-            if (typeof window.onBotStatusUpdate === "function"){
-                window.onBotStatusUpdate(data.online);
-            }
-        
-        case "PLAYLISTS_DATA":
-            if (typeof window.onPlaylistsData === "function") {
-                window.onPlaylistsData(data.playlists);
+
+            switch (cmd) {
+                case "PLAYBACK_STATE":
+                    const stateData = data.state || data.data?.state;
+                    updatePlaybackState(stateData);
+                    if (typeof window.onReturnPlaybackState === "function")
+                        window.onReturnPlaybackState(stateData);
+                    break;
+
+                case "BOT_STATUS":
+                    if (typeof window.onReturnStatus === "function")
+                        window.onReturnStatus(data.data?.online);
+                    break;
+
+                case "PLAYLISTS_DATA":
+                    if (typeof window.onReturnPlaylists === "function")
+                        window.onReturnPlaylists(data.data?.playlists);
+                    break;
+
+                case "AMBIENCE_DATA":
+                    if (typeof window.onReturnAmbience === "function")
+                        window.onReturnAmbience(data.data?.ambience);
+                    break;
+                    
+                case "PLAYLIST_SAVE":
+                    if (typeof window.onReturnPlaylistSave === "function")
+                        window.onReturnPlaylistSave(data.data?.playlist);
+                    break;
+                    
+                case "AMBIENCE_SAVE":
+                    if (typeof window.onReturnAmbienceSave === "function")
+                        window.onReturnAmbienceSave(data.data?.ambience);
+                    break;
+
+                default:
+                    console.log("[WS] Unhandled response:", data);
+                    if (typeof window.onUnhandledCommand === "function")
+                        window.onUnhandledCommand(data);
             }
             break;
 
-        case "AMBIENCE_DATA":
-            if (typeof window.onAmbienceData === "function") {
-                window.onAmbienceData(data.ambience);
-            }
+        // === Heartbeat or live updates ===
+        case "state_update":
+            const state = data.payload || data.state;
+            updatePlaybackState(state);
+            if (typeof window.onBotHeartbeat === "function")
+                window.onBotHeartbeat(state);
             break;
-        
-        case "AMBIENCE_SAVED":
-        case "PLAYLIST_SAVED":
-            if (typeof window.onPlaylistSaved === "function") {
-                window.onPlaylistSaved(data.name);
-            }
+
+        // === Broadcasts / server messages ===
+        case "broadcast":
+            console.log("[WS] Broadcast:", data.message || data);
+            if (typeof window.onBroadcast === "function")
+                window.onBroadcast(data);
             break;
-            
+
         default:
-            console.log("[WS] Unhandled command:", JSON.stringify(data));
-            // Optional catch-all
-            if (typeof window.onUnhandledCommand === "function") {
-                window.onUnhandledCommand(data);
-            }
+            console.log("[WS] Unknown message type:", data);
+            if (typeof window.onUnhandledMessage === "function")
+                window.onUnhandledMessage(data);
     }
 }
 

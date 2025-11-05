@@ -21,13 +21,13 @@ window.onload = async () => {
     document.getElementById("saveBtn").onclick = saveChanges;
 };
 
-window.onPlaylistData = (playlistData) => {
+window.onReturnPlaylists = (playlistData) => {
     playlists = playlistData;
     populatePlaylistSelect();
     showStatus("Playlists loaded.", "success", document.getElementById("statusMessage"))
 }
 
-window.onAmbienceData = (ambienceData) => {
+window.onReturnAmbience = (ambienceData) => {
     playlists = { Ambience: ambienceData};
     currentPlaylist = "Ambience";
     
@@ -41,8 +41,12 @@ window.onAmbienceData = (ambienceData) => {
     showStatus("Ambience loaded.", "success", document.getElementById("statusMessage"))
 }
 
-window.onPlaylistSaved = (playlistName) => {
-    showStatus(`Saved playlist: ${playlistName}`, "success", document.getElementById("statusMessage"));
+window.onReturnPlaylistSaved = (ps) => {
+    showStatus(`Saved playlist: ${ps.get("name")}`, "success", document.getElementById("statusMessage"));
+};
+
+window.onReturnAmbienceSaved = (amb) => {
+    showStatus(`Saved playlist: ${amb.get("name")}`, "success", document.getElementById("statusMessage"));
 };
 
 window.onWebSocketConnected = () => {
