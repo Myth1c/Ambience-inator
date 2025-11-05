@@ -10,7 +10,6 @@ window.onload = async () => {
     if (!authed) return;
 
     // Initial request for playlists
-    sendCommand("GET_PLAYLISTS");
 
     // Mode Toggle Buttons
     document.getElementById("musicModeBtn").onclick = () => switchMode("music");
@@ -45,6 +44,10 @@ window.onAmbienceData = (ambienceData) => {
 window.onPlaylistSaved = (playlistName) => {
     showStatus(`Saved playlist: ${playlistName}`, "success", document.getElementById("statusMessage"));
 };
+
+window.onWebSocketConnected = () => {
+    sendCommand("GET_PLAYLISTS");
+}
 
 function switchMode(mode) {
     if (editMode === mode) return;

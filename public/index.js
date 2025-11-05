@@ -27,11 +27,13 @@ window.onload = async () => {
         sendCommand("STOP_BOT");
     };
     
-    // Initial status request
-    sendCommand("GET_BOT_STATUS");
 };
 
 window.onBotStatusUpdate = (online) => { updateBotStatus(online); } 
+
+window.onWebSocketConnected = () => {
+    sendCommand("GET_BOT_STATUS");
+}
 
 // ===== Helpers =====
 function updateBotStatus(online) {

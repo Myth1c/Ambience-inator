@@ -122,7 +122,7 @@ function handleIncomingCommand(data){
             break;
             
         default:
-            console.log("[WS] Unhandled command:", cmd);
+            console.log("[WS] Unhandled command:", JSON.stringify(cmd));
             // Optional catch-all
             if (typeof window.onUnhandledCommand === "function") {
                 window.onUnhandledCommand(data);
