@@ -152,9 +152,10 @@ function handleIncomingCommand(data) {
         // === Bot playback state return ===
         case "state_update":
             const state = data.payload || data.state;
+            console.log(`Received state/payload: ${JSON.stringify(state)}`)
             updatePlaybackState(state);
             if (typeof window.onReturnPlaybackState === "function")
-                window.onReturnPlaybackState(state);
+                window.onReturnPlaybackState();
             break;
 
         case "bot_hello":
