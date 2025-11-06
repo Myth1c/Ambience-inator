@@ -87,7 +87,8 @@ function connectWebSocket(onMessageCallback) {
 function handleIncomingCommand(data) {
     const type = data.type || "response";  // default
     const cmd  = data.command;
-
+    
+    console.log(`Received command type: ${type}\nCommand has data ${data.data}`)
     switch (type) {
         // === Command responses ===
         case "response":
