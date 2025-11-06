@@ -102,9 +102,10 @@ function handleIncomingCommand(data) {
             switch (cmd) {
                 case "PLAYBACK_STATE":
                     const state = data.payload || data.state;
-                    console.log(`Received state/payload: ${JSON.stringify(state)} -Shared.js`)
+                    console.log(`Received state/payload: ${JSON.stringify(state)}`)
                     updatePlaybackState(state);
                     if (typeof window.onReturnPlaybackState === "function")
+                console.log(`Attempting to send playback state to any listeners`)
                         window.onReturnPlaybackState(state);
                     break;
 
@@ -154,9 +155,10 @@ function handleIncomingCommand(data) {
         // === Bot playback state return ===
         case "state_update":
             const state = data.payload || data.state;
-            console.log(`Received state/payload: ${JSON.stringify(state)} -Shared.js`)
+            console.log(`Received state/payload: ${JSON.stringify(state)}`)
             updatePlaybackState(state);
             if (typeof window.onReturnPlaybackState === "function")
+                console.log(`Attempting to send playback state to any listeners`)
                 window.onReturnPlaybackState(state);
             break;
 
@@ -193,7 +195,9 @@ function updatePlaybackState(newState) {
     if (!newState) return;
 
     const ps = window.playbackState;
-
+    
+    console.log(`Old Playback State: ${JSON.stringify(ps)}`)
+    
     // Merge in new data safely
     if (newState.music) {
         ps.music = {
@@ -220,6 +224,8 @@ function updatePlaybackState(newState) {
     if (typeof window.onPlaybackStateUpdated === "function") {
         window.onPlaybackStateUpdated(ps);
     }
+    
+    console.log(`New Playback State: ${JSON.stringify(playbackState)}`)
 }
 
 function resetPlaybackState(){

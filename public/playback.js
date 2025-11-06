@@ -44,7 +44,7 @@ window.onload = async () => {
 };
 
 window.onReturnPlaybackState = (newState) => {
-    console.log(`Received state/payload: ${JSON.stringify(playbackState)} -playback.js`)
+    console.log(`Playback.js received state update event with payload: ${JSON.stringify(playbackState)}`)
     updateNowPlaying("music");
     updateNowPlaying("ambience");
     updateVCButtons();
