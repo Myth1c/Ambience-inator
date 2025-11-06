@@ -18,20 +18,17 @@ window.onload = async () => {
 
     document.getElementById("musicVolume").oninput = e => {
         const vol = parseInt(e.target.value);
-        playbackState.music.volume = vol;
         sendCommand("SET_VOLUME_MUSIC", { volume: vol });
     };
 
     document.getElementById("ambienceVolume").oninput = e => {
         const vol = parseInt(e.target.value);
-        playbackState.ambience.volume = vol;
         sendCommand("SET_VOLUME_AMBIENCE", { volume: vol });
     };
 
     document.getElementById("joinVCBtn").onclick = () => {
         if (playbackState.in_vc) return;
         sendCommand("JOINVC");
-        playbackState.in_vc = true;
         updateVCButtons();
     };
 
@@ -39,7 +36,6 @@ window.onload = async () => {
         if (!playbackState.in_vc) return;
         sendCommand("LEAVEVC");
         updateVCButtons();
-        resetPlaybackState();
     };
 };
 
@@ -95,22 +91,20 @@ function populateAmbienceList() {
 
 // ====== Playback Control ======
 function togglePlayback(type) {
-    const isPlaying = playbackState[type].playing;
+    const isPlaying = window.playbackState[type].playing;
     const cmd = isPlaying ? "PAUSE" : "RESUME";
 
     sendCommand(cmd, { type });
 }
 
 function toggleShuffle() {
-    playbackState.music.shuffle = !playbackState.music.shuffle;
     sendCommand("SET_SHUFFLE", { enabled: playbackState.music.shuffle });
-    updateToggleVisual("musicShuffle", playbackState.music.shuffle);
+    updateToggleVisual("musicShuffle", window.playbackState.music.shuffle);
 }
 
 function toggleLoop() {
-    playbackState.music.loop = !playbackState.music.loop;
-    sendCommand("SET_LOOP", { enabled: playbackState.music.loop });
-    updateToggleVisual("musicLoop", playbackState.music.loop);
+    sendCommand("SET_LOOP", { enabled: window.playbackState.music.loop });
+    updateToggleVisual("musicLoop", window.playbackState.music.loop);
 }
 
 // ===== Visual Updating =====
@@ -121,12 +115,12 @@ function updateNowPlaying(type) {
     line1 = "";
     line2 = "None";
     
-    if (type === "music" && playbackState.music.playing){
-        line1 = `Playlist: ${playbackState.music.playlist_name} / `;
-        line2 = `Title: ${playbackState.music.track_name}`;
-    }else if (type === "ambience" && playbackState.ambience.playing){
+    if (type === "music" && window.playbackState.music.playing){
+        line1 = `Playlist: ${window.playbackState.music.playlist_name} / `;
+        line2 = `Title: ${window.playbackState.music.track_name}`;
+    }else if (type === "ambience" && window.playbackState.ambience.playing){
         line1 = "";
-        line2 = `${playbackState.ambience.name}`;
+        line2 = `${window.playbackState.ambience.name}`;
     }
     
     fullLine = line1 + line2;
@@ -142,7 +136,7 @@ function updateToggleVisual(id, active) {
 function updateVCButtons() {
     const joinVCBtn = document.getElementById("joinVCBtn");
     const leaveVCBtn = document.getElementById("leaveVCBtn");
-    const inVC = playbackState.in_vc;
+    const inVC = window.playbackState.in_vc;
 
     joinVCBtn.classList.toggle("active", inVC);
     leaveVCBtn.classList.toggle("active", !inVC);

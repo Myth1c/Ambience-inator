@@ -100,10 +100,6 @@ function handleIncomingCommand(data) {
             }
 
             switch (cmd) {
-                case "PLAYBACK_STATE":
-                    const state = data.payload || data.state;
-                    console.log(`Received state/payload: ${JSON.stringify(state)}`)
-                    updatePlaybackState(state);
 
                 case "BOT_STATUS":
                     if (typeof window.onReturnStatus === "function")
@@ -151,7 +147,6 @@ function handleIncomingCommand(data) {
         // === Bot playback state return ===
         case "state_update":
             const state = data.payload || data.state;
-            console.log(`Received state/payload: ${JSON.stringify(state)}`)
             updatePlaybackState(state);
 
         case "bot_hello":
@@ -206,6 +201,7 @@ function updatePlaybackState(newState) {
         newState.music = newState[0];
         newState.ambience = newState[1];
         newState.in_vc = newState[2];
+        newState.bot_online = newState[3];
     }
     
     // --- Merge in safely ---
@@ -228,14 +224,16 @@ function updatePlaybackState(newState) {
         };
     }
 
-    if (typeof newState.in_vc === "boolean") window.playbackState.in_vc = newState.in_vc;
+    if (typeof newState.in_vc === "boolean") window.playbackState.in_vc = newState.in_vc ?? window.playbackState.in_vc;
+    
+    if (newState.bot_online) window.playbackState.bot_online = newState.bot_online ?? window.playbackState.bot_online;
 
     // --- Notify page listeners ---
     if (typeof window.onPlaybackStateUpdated === "function") {
         window.onPlaybackStateUpdated(window.playbackState);
     }
     
-    console.log(`New Playback State: ${JSON.stringify(playbackState)}`);
+    console.log(`New Playback State: ${JSON.stringify(window.playbackState)}`);
 }
 
 function resetPlaybackState(){
