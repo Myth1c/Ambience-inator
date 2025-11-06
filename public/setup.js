@@ -18,13 +18,13 @@ window.onload = async () => {
         showStatus("Saving bot configuration...", "success", statusMessage);
     };
     
-    document.getElementById("updateQueueBtn").onclick = () => {
-        sendCommand("UPDATE_QUEUE_MESSAGE");
-    };
+    // document.getElementById("updateQueueBtn").onclick = () => {
+    //     sendCommand("UPDATE_QUEUE_MESSAGE");
+    // };
 
-    document.getElementById("updateUILinkBtn").onclick = () => {
-        sendCommand("UPDATE_UI_LINK");
-    };
+    // document.getElementById("updateUILinkBtn").onclick = () => {
+    //     sendCommand("UPDATE_UI_LINK");
+    // };
 
 }
 
