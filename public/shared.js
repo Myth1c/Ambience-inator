@@ -187,6 +187,7 @@ function updatePlaybackState(newState) {
     if (!newState) return;
 
     console.log(`Old Playback State: ${JSON.stringify(window.playbackState)}`);
+    console.log(`Attempting to write ${newState} into playback state`)
     
     // Merge in new data safely
     if (newState.music) {
