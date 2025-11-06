@@ -187,9 +187,28 @@ function updatePlaybackState(newState) {
     if (!newState) return;
 
     console.log(`Old Playback State: ${JSON.stringify(window.playbackState)}`);
-    console.log(`Attempting to write ${JSON.stringify(newState)} into playback state`)
+    console.log(`Attempting to write ${JSON.stringify(newState)}, ${typeof(newState)} into playback state`)
     
-    // Merge in new data safely
+    // --- Parse if it's a JSON string ---
+    if (typeof newState === "string") {
+        try {
+            newState = JSON.parse(newState);
+            console.log("[WEB] Parsed playback state from JSON string.");
+        } catch (err) {
+            console.error("[WEB] Failed to parse playback state:", err, newState);
+            return;
+        }
+    }
+    
+    // --- Unwrap if it's in an array ---
+    if (Array.isArray(newState)) {
+        console.warn("[WEB] Playback state is array; unwrapping first element.");
+        newState.music = newState[0];
+        newState.ambience = newState[1];
+        newState.in_vc = newState[2];
+    }
+    
+    // --- Merge in safely ---
     if (newState.music) {
         window.playbackState.music = {
             playlist_name: newState.music.playlist_name ?? window.playbackState.music.playlist_name,
@@ -211,7 +230,7 @@ function updatePlaybackState(newState) {
 
     if (typeof newState.in_vc === "boolean") window.playbackState.in_vc = newState.in_vc;
 
-    // Notify page scripts (if any)
+    // --- Notify page listeners ---
     if (typeof window.onPlaybackStateUpdated === "function") {
         window.onPlaybackStateUpdated(window.playbackState);
     }
