@@ -13,8 +13,8 @@ window.onload = async () => {
 
     document.getElementById("musicSkip").onclick = () => sendCommand("NEXT_SONG");
     document.getElementById("musicPrev").onclick = () => sendCommand("PREVIOUS_SONG");
-    document.getElementById("musicShuffle").onclick = sendCommand("SET_SHUFFLE", { enabled: playbackState.music.shuffle });
-    document.getElementById("musicLoop").onclick = sendCommand("SET_LOOP", { enabled: window.playbackState.music.loop });
+    document.getElementById("musicShuffle").onclick = sendCommand("SET_SHUFFLE", { enabled: !playbackState.music.shuffle });
+    document.getElementById("musicLoop").onclick = sendCommand("SET_LOOP", { enabled: !window.playbackState.music.loop });
 
     document.getElementById("musicVolume").oninput = e => {
         const vol = parseInt(e.target.value);
