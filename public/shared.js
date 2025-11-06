@@ -132,6 +132,7 @@ function handleIncomingCommand(data) {
                     break;
                     
                 case "LEFTVC":
+                    resetPlaybackState();
                     if (typeof window.onReturnVCLeft === "function")
                         window.onReturnVCLeft();
                     break;
@@ -241,7 +242,7 @@ function resetPlaybackState(){
             track_name: "None",
             playing: false, 
             volume: 100, 
-            shuffle: false, 
+            shuffle: true, 
             loop: false 
         },
         ambience: { 
