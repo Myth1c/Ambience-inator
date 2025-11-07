@@ -620,6 +620,12 @@
   overflow-y: auto;
   font-family: "Fira Mono", monospace;
 }
+.playback-panel__content button.selected {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  background: rgba(var(--accent), 0.15);
+}
 .playback-panel__controls {
   display: flex;
   flex-direction: column;

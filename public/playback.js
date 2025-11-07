@@ -53,6 +53,7 @@ window.onPlaybackStateUpdated = () => {
     updateToggleVisual("music-loop", window.playbackState.music.loop);
     updateToggleVisual("music-shuffle", window.playbackState.music.shuffle);
     updatePlaybackButtons(window.playbackState.music.playing, window.playbackState.ambience.playing);
+    autoSelectCurrentPlaylist();
 };
 
 window.onReturnPlaylists = (pls) => {
@@ -86,7 +87,15 @@ function populatePlaylistList() {
         const btn = document.createElement("button");
         btn.classList.add("playlist-item");
         btn.textContent = name;
-        btn.onclick = () => sendCommand("PLAY_PLAYLIST", { name });
+        btn.onclick = () => {
+            // Remove previous selection
+            container.querySelectorAll("button.selected").forEach(el =>
+                el.classList.remove("selected")
+            );
+            // Apply new selection
+            btn.classList.add("selected");
+            sendCommand("PLAY_PLAYLIST", { name });
+        }
         container.appendChild(btn);
     });
 }
@@ -99,7 +108,15 @@ function populateAmbienceList() {
         const btn = document.createElement("button");
         btn.classList.add("playlist-item");
         btn.textContent = title;
-        btn.onclick = () => sendCommand("PLAY_AMBIENCE", { url, title });
+        btn.onclick = () => {
+            // Remove previous selection
+            container.querySelectorAll("button.selected").forEach(el =>
+                el.classList.remove("selected")
+            );
+            // Apply new selection
+            btn.classList.add("selected");
+            sendCommand("PLAY_AMBIENCE", { url, title });
+        }
         container.appendChild(btn);
     }
 }
@@ -189,4 +206,15 @@ function updatePlaybackAvailability(state) {
         musicPanel.classList.remove("disabled-panel");
         ambiencePanel.classList.remove("disabled-panel");
     }
+}
+
+function autoSelectCurrentPlaylist() {
+    const current = playbackState.music.playlist_name;
+    const container = document.getElementById("playlistList");
+
+    container.querySelectorAll("button").forEach(btn => {
+        if (btn.textContent === current) {
+            btn.classList.add("selected");
+        }
+    });
 }

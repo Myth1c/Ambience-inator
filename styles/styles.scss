@@ -755,6 +755,13 @@ $font-main: "Fira Mono", monospace;
 
     overflow-y: auto;
     font-family: $font-main;
+    
+    & button.selected{
+      border-color: $color-accent;
+      color: $color-accent;
+      box-shadow: 0 0 8px $color-accent;
+      background: rgba($color-accent, 0.15);
+    }
   }
 
   &__controls {
@@ -797,6 +804,7 @@ $font-main: "Fira Mono", monospace;
       box-shadow: 0 0 10px $color-accent;
       color: $color-accent;
     }
+    
   }
 
   &__volume {
