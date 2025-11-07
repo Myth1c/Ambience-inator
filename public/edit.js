@@ -1,246 +1,290 @@
-// ===== edit.js =====
+// ========================
+// edit.js — Updated for new HTML (BEM structure)
+// ========================
 
-let currentPlaylist = null;
-let playlists = {};
-let selectedSongUrl = null;
-let editMode = "music";
+let editMode = "music";         // "music" or "ambience"
+let playlists = {};             // Loaded playlists
+let currentPlaylist = null;     // Currently selected playlist name
+let selectedSongUrl = null;     // Used for editing/removing tracks
 
+
+// ========================
+// ON PAGE LOAD
+// ========================
 window.onload = async () => {
+
     const authed = await authCheck();
     if (!authed) return;
 
-    // Initial request for playlists
+    // ========== DOM ELEMENTS ==========
+    const btnMusicMode   = document.getElementById("edit-mode-music");
+    const btnAmbMode     = document.getElementById("edit-mode-ambience");
 
-    // Mode Toggle Buttons
-    document.getElementById("musicModeBtn").onclick = () => switchMode("music");
-    document.getElementById("ambienceModeBtn").onclick = () => switchMode("ambience");
+    const selectPlaylist = document.getElementById("edit-playlist-select");
+    const btnNewPlaylist = document.getElementById("edit-new-playlist");
 
-    document.getElementById("newPlaylistBtn").onclick = createNewPlaylist;
-    document.getElementById("addSongBtn").onclick = addSong;
-    document.getElementById("removeSongBtn").onclick = removeSong;
-    document.getElementById("saveBtn").onclick = saveChanges;
+    const inputTitle     = document.getElementById("edit-title");
+    const inputURL       = document.getElementById("edit-url");
+    const btnAddEdit     = document.getElementById("edit-title-btn");
+    const btnRemove      = document.getElementById("edit-remove-btn");
+    const btnSave        = document.getElementById("edit-save");
+
+    // ========== MODE SWITCH ==========
+    btnMusicMode.addEventListener("click", () => switchMode("music"));
+    btnAmbMode.addEventListener("click",   () => switchMode("ambience"));
+
+    // ========== TOP BAR CONTROLS ==========
+    btnNewPlaylist.addEventListener("click", createNewPlaylist);
+
+    // ========== SONG CONTROLS ==========
+    btnAddEdit.addEventListener("click", addOrEditSong);
+    btnRemove.addEventListener("click", removeSong);
+
+    // ========== SAVE ==========
+    btnSave.addEventListener("click", saveChanges);
+
+    // First load → get music playlists
+    sendCommand("GET_PLAYLISTS");
 };
 
+
+// ========================
+// WEBSOCKET CALLBACKS
+// ========================
 window.onReturnPlaylists = (playlistData) => {
-    playlists = playlistData;
+    playlists = playlistData || {};
     populatePlaylistSelect();
-    showStatus("Playlists loaded.", "success", document.getElementById("statusMessage"))
-}
+    showStatus("Music playlists loaded.", "success", document.getElementById("edit-status"));
+};
 
 window.onReturnAmbience = (ambienceData) => {
-    playlists = { Ambience: ambienceData};
+    playlists = { Ambience: ambienceData };
     currentPlaylist = "Ambience";
-    
-    const select = document.getElementById("playlistSelect");
-    select.value = "Ambience";
+
+    const select = document.getElementById("edit-playlist-select");
+    select.innerHTML = `<option value="Ambience" selected>Ambience</option>`;
     select.disabled = true;
-    
-    document.getElementById("newPlaylistBtn").disabled = true;
-    
+
+    document.getElementById("edit-new-playlist").disabled = true;
+
     loadPlaylist("Ambience");
-    showStatus("Ambience loaded.", "success", document.getElementById("statusMessage"))
-}
-
-window.onReturnPlaylistSaved = (ps) => {
-    showStatus(`Saved playlist: ${ps.get("name")}`, "success", document.getElementById("statusMessage"));
+    showStatus("Ambience loaded.", "success", document.getElementById("edit-status"));
 };
 
-window.onReturnAmbienceSaved = (amb) => {
-    showStatus(`Saved playlist: ${amb.get("name")}`, "success", document.getElementById("statusMessage"));
+// Called after saving
+window.onReturnPlaylistSave = (data) => {
+    showStatus("Playlist saved!", "success", document.getElementById("edit-status"));
 };
 
+window.onReturnAmbienceSave = (data) => {
+    showStatus("Ambience saved!", "success", document.getElementById("edit-status"));
+};
+
+// Request playlists when WS connects
 window.onWebSocketConnected = () => {
-    sendCommand("GET_PLAYLISTS");
-}
+    if (editMode === "music") sendCommand("GET_PLAYLISTS");
+    else sendCommand("GET_AMBIENCE");
+};
 
+
+// ========================
+// MODE SWITCH
+// ========================
 function switchMode(mode) {
     if (editMode === mode) return;
 
     editMode = mode;
     currentPlaylist = null;
-    clearSelection();
+    selectedSongUrl = null;
 
-    // Highlight correct button
-    const musicBtn = document.getElementById("musicModeBtn");
-    const ambienceBtn = document.getElementById("ambienceModeBtn");
-    const highlight = document.querySelector(".mode-highlight");
+    const btnMusic = document.getElementById("edit-mode-music");
+    const btnAmb   = document.getElementById("edit-mode-ambience");
 
-    if (mode === "music") {
-        musicBtn.classList.add("active");
-        ambienceBtn.classList.remove("active");
-        highlight.style.left = "0";
-    } else {
-        ambienceBtn.classList.add("active");
-        musicBtn.classList.remove("active");
-        highlight.style.left = "50%";
-    }
+    btnMusic.classList.toggle("edit-mode__btn--active", mode === "music");
+    btnAmb.classList.toggle("edit-mode__btn--active",   mode === "ambience");
 
-    // Logic for enabling/disabling playlists
-    const select = document.getElementById("playlistSelect");
-    const newBtn = document.getElementById("newPlaylistBtn");
-    const titleEl = document.getElementById("playlistTitle");
+    const select = document.getElementById("edit-playlist-select");
+    const btnNewPlaylist = document.getElementById("edit-new-playlist");
 
-    playlists = {};
-    document.getElementById("songList").innerHTML = "";
+    // Clear list
+    document.getElementById("edit-content").innerHTML = "";
 
     if (mode === "music") {
         select.disabled = false;
-        newBtn.disabled = false;
-        select.innerHTML = '<option value="" disabled selected>-- Choose a playlist --</option>';
-        titleEl.textContent = "Select or create a playlist";
-        sendCommand("GET_PLAYLISTS")
+        btnNewPlaylist.disabled = false;
+
+        select.innerHTML = `<option disabled selected>--- Choose a playlist ---</option>`;
+        sendCommand("GET_PLAYLISTS");
     } else {
         select.disabled = true;
-        newBtn.disabled = true;
-        select.innerHTML = '<option value="Ambience" selected>Ambience</option>';
-        titleEl.textContent = "Ambience Tracks";
-        sendCommand("GET_AMBIENCE")
+        btnNewPlaylist.disabled = true;
+
+        select.innerHTML = `<option value="Ambience" selected>Ambience</option>`;
+        sendCommand("GET_AMBIENCE");
     }
 }
 
-function populatePlaylistSelect() {
-    const select = document.getElementById("playlistSelect");
-    select.innerHTML = '<option value="" disabled selected>-- Choose a playlist --</option>';
 
-    Object.keys(playlists).forEach(name => {
+// ========================
+// POPULATE PLAYLIST SELECT
+// ========================
+function populatePlaylistSelect() {
+    const select = document.getElementById("edit-playlist-select");
+    select.innerHTML = `<option disabled selected>--- Choose a playlist ---</option>`;
+
+    for (const name of Object.keys(playlists)) {
         const opt = document.createElement("option");
         opt.value = name;
         opt.textContent = name;
         select.appendChild(opt);
-    });
+    }
 
-    select.onchange = () => {
-        const name = select.value;
-        loadPlaylist(name);
-    };
+    select.onchange = () => loadPlaylist(select.value);
 }
 
+
+// ========================
+// LOAD PLAYLIST CONTENT
+// ========================
 function loadPlaylist(name) {
     currentPlaylist = name;
-    document.getElementById("playlistTitle").textContent = name;
-    const list = document.getElementById("songList");
-    list.innerHTML = "";
+    selectedSongUrl = null;
 
-    const playlist = playlists[name];
-    if (!playlist) {
-        console.warn(`[Playlist] No data found for ${name}`);
-        return;
-    }
-    
-    // Works for both nested (music) and flat (ambience)
-    for (const [url, title] of Object.entries(playlist)) {
-        const li = document.createElement("li");
-        li.textContent = `${title} | (${url})`;
-        li.onclick = (e) => {
-            // Deselect previous
-            document.querySelectorAll("#songList li.selected").forEach(el => el.classList.remove("selected"));
+    const panel = document.getElementById("edit-content");
+    panel.innerHTML = "";
 
-            // Toggle selection
-            if (li.classList.contains("selected")) {
-                clearSelection();
-                return;
-            }
+    const list = playlists[name];
+    if (!list) return;
 
-            li.classList.add("selected");
-            selectedSongUrl = url;
+    for (const [url, title] of Object.entries(list)) {
+        const row = document.createElement("div");
+        row.classList.add("playlist-item");
+        row.textContent = `${title}  —  ${url}`;
 
-            // Fill input fields
-            document.getElementById("songUrl").value = url;
-            document.getElementById("songTitle").value = title;
-            document.getElementById("addSongBtn").textContent = "Edit Song";
+        row.addEventListener("click", () => selectSong(url, title, row));
 
-        };
-        list.appendChild(li);
+        panel.appendChild(row);
     }
 }
 
+function selectSong(url, title, row) {
+    // Remove previous selection
+    document.querySelectorAll(".edit-panel__item--selected")
+        .forEach(el => el.classList.remove("edit-panel__item--selected"));
+
+    row.classList.add("edit-panel__item--selected");
+
+    selectedSongUrl = url;
+
+    document.getElementById("edit-title").value = title;
+    document.getElementById("edit-url").value = url;
+
+    document.getElementById("edit-title-btn").textContent = "Edit";
+}
+
+
+// ========================
+// CREATE NEW PLAYLIST
+// ========================
 function createNewPlaylist() {
     const name = prompt("Enter new playlist name:");
     if (!name) return;
 
     playlists[name] = {};
     populatePlaylistSelect();
-    document.getElementById("playlistSelect").value = name;
+
+    const select = document.getElementById("edit-playlist-select");
+    select.value = name;
+
     loadPlaylist(name);
 }
 
-function addSong() {
+
+// ========================
+// ADD / EDIT SONG
+// ========================
+function addOrEditSong() {
     if (!currentPlaylist) return alert("Select a playlist first.");
-    
-    const url = document.getElementById("songUrl").value.trim();
-    const title = document.getElementById("songTitle").value.trim();
-    if (!url || !title) return alert("Enter both URL and title.");
 
-    const playlist = playlists[currentPlaylist];
-    
-    // If editing an existing song
-    if (selectedSongUrl && playlist[selectedSongUrl]){
-        // If URL changed, delete old one
-        if(selectedSongUrl !== url) delete playlist[selectedSongUrl];
-        playlist[url] = title;
-    }else{
-        // Add new song
-        playlist[url] = title;
+    const title = document.getElementById("edit-title").value.trim();
+    const url   = document.getElementById("edit-url").value.trim();
+
+    if (!title || !url) {
+        alert("Enter both a title and URL.");
+        return;
     }
-    
-    // Refresh UI
-    loadPlaylist(currentPlaylist)
-    
-    // Reset fields
-    clearSelection();
+
+    const list = playlists[currentPlaylist];
+
+    // Editing?
+    if (selectedSongUrl && list[selectedSongUrl]) {
+
+        // If URL changed → remove old entry
+        if (selectedSongUrl !== url) {
+            delete list[selectedSongUrl];
+        }
+
+        list[url] = title;
+    } 
+    else {
+        list[url] = title;
+    }
+
+    loadPlaylist(currentPlaylist);
+    clearSelectionFields();
 }
 
-function clearSelection() {
+function clearSelectionFields() {
     selectedSongUrl = null;
-    document.querySelectorAll("#songList li.selected").forEach(el => el.classList.remove("selected"));
-    document.getElementById("songUrl").value = "";
-    document.getElementById("songTitle").value = "";
-    document.getElementById("addSongBtn").textContent = "Add Song";
+
+    document.querySelectorAll(".edit-panel__item--selected")
+        .forEach(el => el.classList.remove("edit-panel__item--selected"));
+
+    document.getElementById("edit-title").value = "";
+    document.getElementById("edit-url").value = "";
+
+    document.getElementById("edit-title-btn").textContent = "Add / Edit";
 }
 
+
+// ========================
+// REMOVE SONG
+// ========================
 function removeSong() {
     if (!currentPlaylist) return alert("Select a playlist first.");
-    if (!selectedSongUrl) return alert("Select a song to remove first.");
+    if (!selectedSongUrl) return alert("Select a song to remove.");
 
     delete playlists[currentPlaylist][selectedSongUrl];
+
     loadPlaylist(currentPlaylist);
-    clearSelection();
+    clearSelectionFields();
 }
 
+
+// ========================
+// SAVE PLAYLISTS
+// ========================
 function saveChanges() {
-    if(editMode === "music"){
-        if (!currentPlaylist){
-            showStatus("Select a playlist first.", "warning", document.getElementById("statusMessage"));
+    const statusEl = document.getElementById("edit-status");
+
+    if (editMode === "music") {
+        if (!currentPlaylist) {
+            showStatus("Select a playlist first.", "warning", statusEl);
             return;
         }
+
         sendCommand("SAVE_PLAYLIST", {
             name: currentPlaylist,
-            data: playlists[currentPlaylist]            
-        })
-        console.log(JSON.stringify({
-            name: currentPlaylist,
-            data: playlists[currentPlaylist]            
-        }))
-        showStatus(`Saving "${currentPlaylist}"...`, "success", document.getElementById("statusMessage"))
-    }else{
-        sendCommand("SAVE_AMBIENCE", {
-            data: playlists["Ambience"]          
-        })
-        console.log(JSON.stringify({
-            data: playlists["Ambience"]          
-        }))
-        showStatus("Saving Ambience...", "success", document.getElementById("statusMessage"))
-    }
-    
-}
+            data: playlists[currentPlaylist]
+        });
 
-// Deselect if clicking outside the list or controls
-document.addEventListener("click", (e) => {
-    const clickedInsideList = e.target.closest("#songList");
-    const clickedInsideControls = e.target.closest(".song-controls");
-    if (!clickedInsideList && !clickedInsideControls) {
-        // Remove the visual highlight as well
-        document.querySelectorAll("#songList li.selected").forEach(el => el.classList.remove("selected"));
-        clearSelection();
+        showStatus(`Saving "${currentPlaylist}"...`, "success", statusEl);
+
+    } else {
+        sendCommand("SAVE_AMBIENCE", {
+            data: playlists["Ambience"]
+        });
+
+        showStatus("Saving Ambience...", "success", statusEl);
     }
-});
+}

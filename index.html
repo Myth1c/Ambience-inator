@@ -1,31 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Ambience-inator 5.0</title>
-    <link rel="stylesheet" href="public/style.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ambienceinator 5.0</title>
+    <link rel="stylesheet" href="styles/styles.css"/>
     <script src="public/shared.js" defer></script>
-    <script src="public/index.js"></script>
+    <script src="public/index.js" defer></script>
 </head>
-<body>
-    <h1>Ambience-inator 5.0</h1>
-    
-    <!-- Navigation Menu -->
-    <div id="navMenu" class="nav-menu">
-        <h2>Navigation</h2>
-        <button class="nav-btn" onclick="window.location.href='./playback'">Audio Playback</button>
-        <button class="nav-btn" onclick="window.location.href='./edit'">Edit Playlists</button>
-        <button class="nav-btn" onclick="window.location.href='./setup'">Setup</button>
-        <button id="startBotBtn" class="nav-btn">Start Bot</button>
-        <button id="stopBotBtn" class="nav-btn">Stop Bot</button>
-        <button id="rebootBotBtn" class="nav-btn">Reboot Bot</button>
-    </div>
-        
-    <pre id="statusBox" class="status-box">
-        <h3>Status</h3>
-        <p id="bot-status">Unable to reach bot</p>
-        <p id="web-status">Unable to reach webserver</p>
-    </pre>
-    
+<body class="page page--dark">
+    <header class="header">
+        <h1 class="header__title">Ambienceinator 5.0</h1>
+    </header>
+
+    <main class="home">
+        <section class="home__nav nav-box">
+        <h2 class="nav-box__title">Navigation</h2>
+        <nav class="nav-box__menu">
+            <a href="./playback" class="nav-box__btn nav-box__btn--link">Audio Playback</a>
+            <a href="./edit" class="nav-box__btn nav-box__btn--link">Edit Playlists</a>
+            <a href="./setup" class="nav-box__btn nav-box__btn--link">Setup</a>
+
+            <button class="nav-box__btn nav-box__btn--action" id="btn-start">Start Bot</button>
+            <button class="nav-box__btn nav-box__btn--action" id="btn-stop">Stop Bot</button>
+            <button class="nav-box__btn nav-box__btn--action" id="btn-reboot">Reboot Bot</button>
+        </nav>
+        </section>
+
+        <section class="home__status status-box">
+        <h2 class="status-box__title">Status</h2>
+        <div class="status-box__item status-box__item--bot">
+            <span class="status-box__label">Bot Connection:</span>
+            <span class="status-box__value" id="status-bot">Unknown</span>
+        </div>
+        <div class="status-box__item status-box__item--web">
+            <span class="status-box__label">Webserver Connection:</span>
+            <span class="status-box__value" id="status-web">Unknown</span>
+        </div>
+        </section>
+    </main>
 </body>
 </html>

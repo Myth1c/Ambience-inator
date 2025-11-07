@@ -1,66 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Ambience-inator Playback</title>
-    <link rel="stylesheet" href="public/style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ambienceinator 5.0 - Playback</title>
+    <link rel="stylesheet" href="styles/styles.css" />
     <script src="public/shared.js" defer></script>
     <script src="public/playback.js" defer></script>
+    
 </head>
-<body>
-    <h2>Playback Control</h2>
+<body class="page page--dark">
+    <main class="playback">
 
-    <div class="playback-container">
-        <div id="musicPanel" class="playback-panel">
-            <h3>Music Playlists</h3>
-            <div id="playlistList" class="playback-list"></div>
-            <div class="control-bar">
-                <button id="musicPlayPause" class="control-btn">Play</button>
-                <div class="volume-control">
-                    <label for="musicVolume">Volume</label>
-                    <input id="musicVolume" type="range" min="0" max="100" value="100">
-                </div>
-            </div>
-            
-            <div class="control-bar secondary">
-                <button id="musicPrev" class="control-btn small">Previous</button>
-                <button id="musicShuffle" class="control-btn small">Shuffle</button>
-                <button id="musicLoop" class="control-btn small">Loop</button>
-                <button id="musicSkip" class="control-btn small">Skip</button>
-            </div>
-        </div>
+        <section class="playback__panels playback-panels">
+        <!-- Music Panel -->
+        <section class="playback-panels__panel playback-panel playback-panel--music">
+            <h2 class="playback-panel__title">Music Playlists</h2>
+            <div class="playback-panel__content" id="music-content"></div>
 
-        <div id="ambiencePanel" class="playback-panel">
-            <h3>Ambience</h3>
-            <div id="ambienceList" class="playback-list"></div>
-            <div class="control-bar">
-                <button id="ambiencePlayPause" class="control-btn">Play</button>
-                <div class="volume-control">
-                    <label for="ambienceVolume">Volume</label>
-                    <input id="ambienceVolume" type="range" min="0" max="100" value="25">
-                </div>
+            <div class="playback-panel__controls">
+            <div class="playback-panel__controls-row">
+                <button id="music-playpause" class="playback-panel__btn">Play/Pause</button>
+                <input type="range" id="music-volume" class="playback-panel__volume" min="0" max="100" />
             </div>
-        </div>
-        
-        
-        
-    </div>
+            <div class="playback-panel__controls-row">
+                <button id="music-prev" class="playback-panel__btn">Previous</button>
+                <button id="music-shuffle" class="playback-panel__btn">Shuffle</button>
+                <button id="music-loop" class="playback-panel__btn">Loop</button>
+                <button id="music-skip" class="playback-panel__btn">Skip</button>
+            </div>
+            </div>
+        </section>
+
+        <!-- Ambience Panel -->
+        <section class="playback-panels__panel playback-panel playback-panel--ambience">
+            <h2 class="playback-panel__title">Ambience</h2>
+            <div class="playback-panel__content" id="ambience-content"></div>
+
+            <div class="playback-panel__controls">
+            <div class="playback-panel__controls-row">
+                <button id="ambience-playpause" class="playback-panel__btn">Play/Pause</button>
+                <input type="range" id="ambience-volume" class="playback-panel__volume" min="0" max="100" />
+            </div>
+            <div class="playback-panel__controls-row playback-panel__controls-row--empty"></div>
+            </div>
+        </section>
+        </section>
+
+        <!-- Now Playing Panels -->
+        <section class="playback__nowplaying playback-nowplaying">
+        <section class="playback-nowplaying__panel">
+            <h3 class="playback-nowplaying__title">Now Playing (Music)</h3>
+            <p class="playback-nowplaying__line" id="np-music-playlist">Playlist: ...</p>
+            <p class="playback-nowplaying__line" id="np-music-track">Track: ...</p>
+        </section>
+
+        <section class="playback-nowplaying__panel">
+            <h3 class="playback-nowplaying__title">Now Playing (Ambience)</h3>
+            <p class="playback-nowplaying__line" id="np-ambience-playlist">Playlist: ...</p>
+            <p class="playback-nowplaying__line" id="np-ambience-track">Track: ...</p>
+        </section>
+        </section>
+
+    </main>
     
-    <div class="now-playing-row">
-        <div class="now-playing">
-            <h3>Now Playing</h3>
-            <p id="musicNowPlaying" class="now-text">None</p>
-        </div>
-        <div class="now-playing">
-            <h3>Now Playing</h3>
-            <p id="ambienceNowPlaying" class="now-text">None</p>
-        </div>
+    <div class="playback-floating-vc">
+        <button id="vc-join" class="playback-floating-vc__btn">Join VC</button>
+        <button id="vc-leave" class="playback-floating-vc__btn">Leave VC</button>
     </div>
-    
-    <div id="vcPanel" class="vc-toggle">
-        <button id="joinVCBtn" class="control-btn active">Join VC</button>
-        <button id="leaveVCBtn" class="control-btn">Leave VC</button>
-    </div>
-    <button class="floating" onclick="window.location.href='./'">Back</button>
+
+    <a href="./" class="playback__back-btn back-btn">Back</a>
 </body>
 </html>

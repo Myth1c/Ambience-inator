@@ -26,25 +26,25 @@ let playbackState = {
 // === Auth helper ===
 async function authCheck() {
 
-    try {
-        const res = await fetch(`${API_BASE}/auth_check`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}),
-            credentials: "include"
-        });
+    // try {
+    //     const res = await fetch(`${API_BASE}/auth_check`, {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify({}),
+    //         credentials: "include"
+    //     });
 
-        if (!res.ok) throw new Error("Auth failed");
-        const data = await res.json();
-        if (!data.ok) throw new Error("Auth denied");
+    //     if (!res.ok) throw new Error("Auth failed");
+    //     const data = await res.json();
+    //     if (!data.ok) throw new Error("Auth denied");
 
-        console.log("[WEB] Auth successful");
-        return true;
-    } catch (err) {
-        console.error("[WEB] Auth error:", err);
-        window.location.href = "./auth.html";
-        return false;
-    }
+    //     console.log("[WEB] Auth successful");
+    //     return true;
+    // } catch (err) {
+    //     console.error("[WEB] Auth error:", err);
+    //     window.location.href = "./auth.html";
+    //     return false;
+    // }
 }
 
 // === WebSocket setup ===

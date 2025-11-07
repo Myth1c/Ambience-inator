@@ -1,91 +1,90 @@
-// ===== playback.js =====
+// ========================
+// playback.js — Updated for new HTML (BEM structure)
+// ========================
 
+// Local cached data
 let playlists = {};
 let ambience = {};
-// ===== WINDOW STARTUP =====
+
+// ========================
+// ON PAGE LOAD
+// ========================
 window.onload = async () => {
     const authed = await authCheck();
     if (!authed) return;
 
-    // Main controls
-    document.getElementById("musicPlayPause").onclick = () => togglePlayback("music");
-    document.getElementById("ambiencePlayPause").onclick = () => togglePlayback("ambience");
+    // ==== MUSIC BUTTONS ====
+    document.getElementById("music-playpause").onclick = () => togglePlayback("music");
+    document.getElementById("music-prev").onclick = () => sendCommand("PREVIOUS_SONG");
+    document.getElementById("music-skip").onclick = () => sendCommand("NEXT_SONG");
+    document.getElementById("music-shuffle").onclick = () =>
+        sendCommand("SET_SHUFFLE", { enabled: !window.playbackState.music.shuffle });
+    document.getElementById("music-loop").onclick = () =>
+        sendCommand("SET_LOOP", { enabled: !window.playbackState.music.loop });
 
-    document.getElementById("musicSkip").onclick = () => sendCommand("NEXT_SONG");
-    document.getElementById("musicPrev").onclick = () => sendCommand("PREVIOUS_SONG");
-    document.getElementById("musicShuffle").onclick = () => sendCommand("SET_SHUFFLE", { enabled: !playbackState.music.shuffle });
-    document.getElementById("musicLoop").onclick = () => sendCommand("SET_LOOP", { enabled: !window.playbackState.music.loop });
-
-    document.getElementById("musicVolume").oninput = e => {
-        const vol = parseInt(e.target.value);
-        sendCommand("SET_VOLUME_MUSIC", { volume: vol });
+    document.getElementById("music-volume").oninput = e => {
+        sendCommand("SET_VOLUME_MUSIC", { volume: parseInt(e.target.value) });
     };
 
-    document.getElementById("ambienceVolume").oninput = e => {
-        const vol = parseInt(e.target.value);
-        sendCommand("SET_VOLUME_AMBIENCE", { volume: vol });
+    // ==== AMBIENCE BUTTONS ====
+    document.getElementById("ambience-playpause").onclick = () => togglePlayback("ambience");
+
+    document.getElementById("ambience-volume").oninput = e => {
+        sendCommand("SET_VOLUME_AMBIENCE", { volume: parseInt(e.target.value) });
     };
 
-    document.getElementById("joinVCBtn").onclick = () => {
-        if (window.playbackState.in_vc) return;
-        sendCommand("JOINVC");
+    // ==== VC BUTTONS ====
+    document.getElementById("vc-join").onclick = () => {
+        if (!window.playbackState.in_vc) sendCommand("JOINVC");
     };
 
-    document.getElementById("leaveVCBtn").onclick = () => {
-        if (!window.playbackState.in_vc) return;
-        sendCommand("LEAVEVC");
+    document.getElementById("vc-leave").onclick = () => {
+        if (window.playbackState.in_vc) sendCommand("LEAVEVC");
     };
 };
 
-// ===== Event Listeners =====
+// ========================
+// WEBSOCKET CALLBACKS
+// ========================
 window.onPlaybackStateUpdated = () => {
-    console.log("Playback.js received state update event");
     updateNowPlaying("music");
     updateNowPlaying("ambience");
     updateVCButtons();
-    updateToggleVisual("musicLoop", window.playbackState.music.loop);
-    updateToggleVisual("musicShuffle", window.playbackState.music.shuffle);
+    updateToggleVisual("music-loop", window.playbackState.music.loop);
+    updateToggleVisual("music-shuffle", window.playbackState.music.shuffle);
     updatePlaybackButtons(window.playbackState.music.playing, window.playbackState.ambience.playing);
-}
+};
 
 window.onReturnPlaylists = (pls) => {
-    console.log(`Attempting to display ${JSON.stringify(pls)}`)
-    playlists = pls
-    populatePlaylistList()
-}
+    playlists = pls;
+    populatePlaylistList();
+};
 
 window.onReturnAmbience = (amb) => {
-    console.log(`Attempting to display ${JSON.stringify(amb)}`)
-    ambience = amb
-    populateAmbienceList()
-}
+    ambience = amb;
+    populateAmbienceList();
+};
 
 window.onWebSocketConnected = () => {
     sendCommand("GET_BOT_STATUS");
     sendCommand("GET_PLAYLISTS");
     sendCommand("GET_AMBIENCE");
     sendCommand("GET_PLAYBACK_STATE");
-}
+};
 
-window.onReturnStatus = (status) => {
-    updatePlaybackAvailability(status)
-}
+window.onReturnStatus = (status) => updatePlaybackAvailability(status);
 
-function onReturnVCJoin(){
-    updatePlaybackAvailability("online")
-}
-
-function onReturnVCLeft(){
-    updatePlaybackAvailability("online")
-}
+function onReturnVCJoin() { updatePlaybackAvailability("online"); }
+function onReturnVCLeft() { updatePlaybackAvailability("online"); }
 
 // ====== UI Setup ======
 function populatePlaylistList() {
-    const container = document.getElementById("playlistList");
+    const container = document.getElementById("music-content");
     container.innerHTML = "";
 
     Object.keys(playlists).forEach(name => {
         const btn = document.createElement("button");
+        btn.classList.add("playlist-item");
         btn.textContent = name;
         btn.onclick = () => sendCommand("PLAY_PLAYLIST", { name });
         container.appendChild(btn);
@@ -93,11 +92,12 @@ function populatePlaylistList() {
 }
 
 function populateAmbienceList() {
-    const container = document.getElementById("ambienceList");
+    const container = document.getElementById("ambience-content");
     container.innerHTML = "";
 
     for (const [url, title] of Object.entries(ambience)) {
         const btn = document.createElement("button");
+        btn.classList.add("playlist-item");
         btn.textContent = title;
         btn.onclick = () => sendCommand("PLAY_AMBIENCE", { url, title });
         container.appendChild(btn);
@@ -108,102 +108,80 @@ function populateAmbienceList() {
 function togglePlayback(type) {
     const isPlaying = window.playbackState[type].playing;
     const cmd = isPlaying ? "PAUSE" : "RESUME";
-
     sendCommand(cmd, { type });
-    
 }
 
 // ===== Visual Updating =====
 function updateNowPlaying(type) {
-    const element = document.getElementById(
-        type === "music" ? "musicNowPlaying" : "ambienceNowPlaying"
-    );
-    line1 = "";
-    line2 = "None";
-    
-    if (type === "music" && window.playbackState.music.playing){
-        line1 = `Playlist: ${window.playbackState.music.playlist_name} / `;
-        line2 = `Title: ${window.playbackState.music.track_name}`;
-    }else if (type === "ambience" && window.playbackState.ambience.playing){
-        line1 = "";
-        line2 = `${window.playbackState.ambience.name}`;
+    if (type === "music") {
+        const elPlaylist = document.getElementById("np-music-playlist");
+        const elTrack = document.getElementById("np-music-track");
+
+        if (!window.playbackState.music.playing) {
+            elPlaylist.textContent = "Playlist: None";
+            elTrack.textContent = "Track: None";
+        } else {
+            elPlaylist.textContent = `Playlist: ${window.playbackState.music.playlist_name}`;
+            elTrack.textContent = `Track: ${window.playbackState.music.track_name}`;
+        }
     }
-    
-    fullLine = line1 + line2;
-    element.textContent = fullLine;
+
+    if (type === "ambience") {
+        const elPlaylist = document.getElementById("np-ambience-playlist");
+        const elTrack = document.getElementById("np-ambience-track");
+
+        if (!window.playbackState.ambience.playing) {
+            elPlaylist.textContent = "Playlist: None";
+            elTrack.textContent = "Track: None";
+        } else {
+            elPlaylist.textContent = "Playlist: Ambience";
+            elTrack.textContent = `Track: ${window.playbackState.ambience.name}`;
+        }
+    }
 }
 
 function updateToggleVisual(id, active) {
     const btn = document.getElementById(id);
-    btn.style.background = active ? "#4caf50" : "#222";
-    btn.style.borderColor = active ? "#4caf50" : "#555";
+    if (!btn) return;
+    btn.classList.toggle("active", active);
+}
+
+function updatePlaybackButtons(musicPlaying, ambiencePlaying) {
+    document.getElementById("music-playpause").textContent = musicPlaying ? "Pause" : "Play";
+    document.getElementById("ambience-playpause").textContent = ambiencePlaying ? "Pause" : "Play";
 }
 
 function updateVCButtons() {
-    const joinVCBtn = document.getElementById("joinVCBtn");
-    const leaveVCBtn = document.getElementById("leaveVCBtn");
+    const join = document.getElementById("vc-join");
+    const leave = document.getElementById("vc-leave");
     const inVC = window.playbackState.in_vc;
 
-    joinVCBtn.classList.toggle("active", inVC);
-    leaveVCBtn.classList.toggle("active", !inVC);
-
-    joinVCBtn.disabled = inVC;
-    leaveVCBtn.disabled = !inVC;
+    join.disabled = inVC;
+    leave.disabled = !inVC;
 }
 
-function updatePlaybackButtons(musicPlaying, ambiencePlaying){
-    const musicPlay = document.getElementById("musicPlayPause")
-    const ambPlay = document.getElementById("ambiencePlayPause")
-    
-    if(musicPlaying){
-        musicPlay.textContent = "Pause";
-    }else{
-        musicPlay.textContent = "Play";
-    }
-    
-    if(ambiencePlaying){
-        ambPlay.textContent = "Pause";
-    }else{
-        ambPlay.textContent = "Play";
-    }
-    
-}
-
-function updatePlaybackAvailability(state){
+function updatePlaybackAvailability(state) {
     const online = state === "online";
-    const inVC = window.playbackState.in_vc === true;
-    
-    // Elements
-    const musicPanel = document.getElementById("musicPanel")
-    const ambiencePanel = document.getElementById("ambiencePanel")
-    const vcPanel = document.getElementById("vcPanel")
-    
-    // Logic:
-    // Bot offline -> Everything is disabled
-    // Bot offline but NOT in VC -> Playback buttons are disabled, but VC join button is enabled
-    // Bot online AND in VC -> Everything is enabled
-    
-    if(!online){
-        // Disable everything
+    const inVC = window.playbackState.in_vc;
+
+    const musicPanel = document.querySelector(".playback-panel--music");
+    const ambiencePanel = document.querySelector(".playback-panel--ambience");
+    const vcPanel = document.querySelector(".playback-vc");
+
+    if (!online) {
         musicPanel.classList.add("disabled-panel");
         ambiencePanel.classList.add("disabled-panel");
         vcPanel.classList.add("disabled-panel");
-        
-    }else {
-        // Bot online:
-        vcPanel.classList.remove("disabled-panel");
-        
-        if(!inVC){
-            // Online but NOT in a VC
-            musicPanel.classList.add("disabled-panel");
-            ambiencePanel.classList.add("disabled-panel");
-            
-        }else{
-            // Online AND in a vc
-            musicPanel.classList.remove("disabled-panel");
-            ambiencePanel.classList.remove("disabled-panel");
-            
-        }
-        
+        return;
+    }
+
+    vcPanel.classList.remove("disabled-panel");
+
+    if (!inVC) {
+        musicPanel.classList.add("disabled-panel");
+        ambiencePanel.classList.add("disabled-panel");
+    } else {
+        musicPanel.classList.remove("disabled-panel");
+        ambiencePanel.classList.remove("disabled-panel");
     }
 }

@@ -1,103 +1,107 @@
-// ===== index.js =====
-window._botCheckTimer = null;
+// ========================
+// index.js — Updated for BEM + new HTML
+// ========================
 
+// Cached button references
+let btnStart, btnStop, btnReboot;
 
+// Cached status labels
+let elBotStatus, elWebStatus;
+
+// ========================
+// Init
+// ========================
 window.onload = async () => {
-    
-    // Ensure user is authenticated
+
+    // === Auth check ===
     const authed = await authCheck();
-    if(!authed) return;
-        
-    // === Button references ===
-    const startBtn = document.getElementById("startBotBtn");
-    const stopBtn = document.getElementById("stopBotBtn");
-    const rebootBtn = document.getElementById("rebootBotBtn");
-    
-    // === Button Actions
-    rebootBtn.onclick = () => {
-        console.log("[WEB] Sending REBOOT to bot");
-        sendCommand("REBOOT_BOT");
+    if (!authed) return;
+
+    // === Query DOM Elements ===
+    btnStart = document.getElementById("btn-start");
+    btnStop = document.getElementById("btn-stop");
+    btnReboot = document.getElementById("btn-reboot");
+
+    elBotStatus = document.getElementById("status-bot");
+    elWebStatus = document.getElementById("status-web");
+
+    // Make sure all exist:
+    if (!btnStart || !btnStop || !btnReboot || !elBotStatus || !elWebStatus) {
+        console.error("[INDEX] Some DOM elements were not found in index.html");
+        return;
+    }
+
+    // === Hook up button actions ===
+    btnStart.addEventListener("click", () => sendCommand("START_BOT"));
+    btnStop.addEventListener("click", () => sendCommand("STOP_BOT"));
+    btnReboot.addEventListener("click", () => sendCommand("REBOOT_BOT"));
+
+    // === Request initial bot status once WS connects ===
+    window.onWebSocketConnected = () => {
+        sendCommand("GET_BOT_STATUS");
     };
-    startBtn.onclick = () => {
-        console.log("[WEB] Sending START_BOT");
-        sendCommand("START_BOT");
-    };
-    stopBtn.onclick = () => {
-        console.log("[WEB] Sending STOP_BOT");
-        sendCommand("STOP_BOT");
-    };
-    
+
 };
 
-window.onHeartbeatUpdate = (webOK, botOK) => { updateBotStatus(webOK, botOK) };
+// ========================
+// HEARTBEAT & BOT STATUS UPDATES
+// ========================
+window.onHeartbeatUpdate = (webOK, botOK) => {
+    updateBotStatus(webOK, botOK);
+};
 
-window.onReturnStatus = (statusValue) => { 
-    // Normalize to boolean
-    
-    const webOK = true; // If we're getting responses from the bot, the webserver is online
-    
+window.onReturnStatus = (statusValue) => {
+    // If we’re receiving this response, the webserver is definitely online
+    const webOK = true;
+
     updateBotStatus(webOK, statusValue);
 };
 
-window.onWebSocketConnected = () => {
-    sendCommand("GET_BOT_STATUS");
-}
-
-// ===== Helpers =====
+// ========================
+// Update UI for bot + webserver status
+// ========================
 function updateBotStatus(webOK, botStatus) {
-    const webEl = document.getElementById("web-status");
-    const botEl = document.getElementById("bot-status");
+    // --- DOM not ready yet: prevent crashes ---
+    if (!btnStart || !btnStop || !btnReboot || !elBotStatus || !elWebStatus) {
+        console.warn("[INDEX] updateBotStatus called before elements were ready.");
+        return;
+    }
 
-    const startBtn = document.getElementById("startBotBtn");
-    const stopBtn = document.getElementById("stopBotBtn");
-    const rebootBtn = document.getElementById("rebootBotBtn");
-    
-    // --- Normalize Inputs ---
-    // Convert boolean to string for consistency
+    // Normalize botStatus
     if (botStatus === true) botStatus = "online";
     else if (botStatus === false) botStatus = "offline";
     else if (typeof botStatus !== "string") botStatus = "offline";
-    
-    // Default fallback
-    if (!botStatus) botStatus = "offline";
 
-    // ---- Web Server ----
-    if (webEl) {
-        if (webOK) {
-            webEl.textContent = "Webserver Online";
-            webEl.style.color = "#4caf50";
-        } else {
-            webEl.textContent = "Webserver Offline";
-            webEl.style.color = "#f44336";
-        }
+    // --- Webserver status ---
+    elWebStatus.textContent = webOK ? "Online" : "Offline";
+    elWebStatus.style.color = webOK ? "#4caf50" : "#f44336";
+
+    // --- Bot status ---
+    switch (botStatus) {
+        case "online":
+            elBotStatus.textContent = "Online";
+            elBotStatus.style.color = "#4caf50";
+            break;
+
+        case "booting":
+            elBotStatus.textContent = "Starting...";
+            elBotStatus.style.color = "#ffca28";
+            break;
+
+        default:
+            elBotStatus.textContent = "Offline";
+            elBotStatus.style.color = "#f44336";
+            break;
     }
 
-    // ---- Bot ----
-    if (botEl) {
-        switch (botStatus) {
-            case "online":
-                botEl.textContent = "Bot Online";
-                botEl.style.color = "#4caf50";
-                break;
-            case "booting":
-                botEl.textContent = "Bot Starting...";
-                botEl.style.color = "#ffca28";
-                break;
-            case "offline":
-            default:
-                botEl.textContent = "Bot Offline";
-                botEl.style.color = "#f44336";
-                break;
-        }
-    }
-
-    // ---- Button State ----
-    const isOnline = botStatus === "online";
+    // --- Button states ---
+    const isOnline  = botStatus === "online";
     const isBooting = botStatus === "booting";
 
-    if (startBtn) startBtn.disabled = isOnline || isBooting;
-    if (stopBtn) stopBtn.disabled = !isOnline && !isBooting;
-    if (rebootBtn) rebootBtn.disabled = !isOnline;
+    btnStart.disabled  = isOnline || isBooting;
+    btnStop.disabled   = !isOnline && !isBooting;
+    btnReboot.disabled = !isOnline;
 
     console.log(`[STATUS] Web=${webOK ? "Online" : "Offline"} | Bot=${botStatus}`);
 }
+

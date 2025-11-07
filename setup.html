@@ -1,38 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Ambience-inator Setup</title>
-  <link rel="stylesheet" href="public/style.css"/>
-  <script src="public/shared.js" defer></script>
-  <script src="public/setup.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ambienceinator 5.0 - Setup</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script src="public/shared.js" defer></script>
+    <script src="public/setup.js" defer></script>
 </head>
-<body>
-  
-  <h2>Bot Setup</h2>
-  
-  <div class="setup-form">
-      <label>Voice Channel ID:</label>
-      <input id="vcInput" type="text" placeholder="e.g. 123456789012345678">
+<body class="page page--dark">
+    <main class="setup">
+        <section class="setup__panel setup-panel">
+            <h1 class="setup-panel__title">Setup</h1>
 
-      <label>Text Channel ID:</label>
-      <input id="tcInput" type="text" placeholder="e.g. 234567890123456789">
+            <label for="setup-text" class="setup-panel__label">Text Channel ID</label>
+            <input
+                type="text"
+                id="setup-text"
+                class="setup-panel__input"
+                placeholder="Enter Text Channel ID"
+                autocomplete="off"
+            />
 
-      <button id="saveBtn">Save Configuration</button>
-      <div id="statusMessage" class="status-message"></div>
-      
-  </div>
-  
-    <!-- === Discord Message Panel === -->
-  <!-- <div class="setup-panel">
-      <h3>Discord Message Controls</h3>
-      <div class="button-row">
-          <button id="updateQueueBtn">Update Queue Message</button>
-          <button id="updateUILinkBtn">Update UI Link</button>
-      </div>
-  </div> -->
-  
-  <button class="floating" onclick="window.location.href='./'">Back</button>
-  
+            <label for="setup-voice" class="setup-panel__label">Voice Channel ID</label>
+            <input
+                type="text"
+                id="setup-voice"
+                class="setup-panel__input"
+                placeholder="Enter Voice Channel ID"
+                autocomplete="off"
+            />
+
+            <button id="setup-save" class="setup-panel__btn">Save</button>
+
+            <div id="setup-status" class="setup-panel__status">&nbsp;</div>
+        </section>
+        
+        <section class="setup-theme">
+            <h2 class="setup-theme__title">Theme</h2>
+
+            <div class="setup-theme__select-wrapper">
+                <select id="theme-select" class="setup-theme__select setup-theme__select--styled">
+                    <option value="green">Green (Default)</option>
+                    <option value="purple">Purple</option>
+                    <option value="pink">Pink</option>
+                    <option value="forest">Forest</option>
+                </select>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="setup-theme__preview">
+                <h3 class="setup-theme__preview-title">Preview</h3>
+
+                <div class="setup-theme__preview-box">
+                    <input
+                        type="text"
+                        class="setup-theme__preview-input"
+                        placeholder="Sample text..."
+                    />
+
+                    <button class="setup-theme__preview-btn">
+                        Preview Button
+                    </button>
+                </div>
+            </div>
+
+            <p class="setup-theme__status" id="theme-status"></p>
+        </section>
+    </main>
+
+    <a href="./" class="setup__back-btn back-btn">Back</a>
 </body>
 </html>

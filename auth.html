@@ -1,35 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Authenticate - Ambience-inator</title>
-    <link rel="stylesheet" href="public/style.css">
-    <style>
-        .auth-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            height: 100vh;
-        }
-        input {
-            padding: 8px;
-            width: 240px;
-            text-align: center;
-        }
-        button {
-            padding: 8px 16px;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ambienceinator 5.0 - Auth</title>
+    <link rel="stylesheet" href="styles/styles.css" />
     <script src="public/shared.js" defer></script>
     <script src="public/auth.js" defer></script>
 </head>
-<body>
-    <div class="auth-box">
-        <h2>Enter Access Key</h2>
-        <input id="authKey" type="password" placeholder="Access Key">
-        <button onclick="submitAuth()">Submit</button>
-    </div>
+<body class="page page--dark">
+    <main class="auth">
+        <section class="auth__panel auth-panel">
+        <h1 class="auth-panel__title">Authentication Required</h1>
+
+        <label for="auth-key" class="auth-panel__label">Enter Access Key</label>
+        <input 
+            type="password" 
+            id="auth-key" 
+            class="auth-panel__input" 
+            placeholder="Access Key" 
+            autocomplete="off"
+        />
+
+        <button id="auth-submit" class="auth-panel__btn">Login</button>
+        </section>
+    </main>
 </body>
 </html>

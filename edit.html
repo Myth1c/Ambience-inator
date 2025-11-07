@@ -1,51 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Edit Playlist - Ambience-inator 5.0</title>
-    <link rel="stylesheet" href="public/style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ambienceinator 5.0 - Edit Playlists</title>
+    <link rel="stylesheet" href="styles/styles.css" />
     <script src="public/shared.js" defer></script>
     <script src="public/edit.js" defer></script>
-</head>    
-<body>
-    
-    <div class="mode-toggle-container">
-        <div class="mode-switch">
-            <div class="mode-highlight"></div>
-            <button id="musicModeBtn" class="mode-option active" onclick="switchMode('music')">Music</button>
-            <button id="ambienceModeBtn" class="mode-option" onclick="switchMode('ambience')">Ambience</button>
-        </div>
-    </div>
-    
-    <h2>Edit Playlist</h2>
-    
-    <div class="playlist-controls">
-        <label for="playlistSelect">Select Playlist:</label>
-        <select id="playlistSelect">
-            <option value="" disabled selected>-- Choose a playlist --</option>
+</head>
+<body class="page page--dark">
+    <main class="edit">
+        
+        <!-- Mode Switch Panel -->
+        <section class="edit__mode edit-mode">
+            <button id="edit-mode-music" class="edit-mode__btn edit-mode__btn--active">Music</button>
+            <button id="edit-mode-ambience" class="edit-mode__btn">Ambience</button>
+        </section>
+        
+        <!-- Top Controls -->
+        <section class="edit__top edit-top">
+        <span class="edit-top__label">Selected Playlist</span>
+
+        <select id="edit-playlist-select" class="edit-top__select">
+            <option selected disabled>--- Choose a playlist ---</option>
+            <!-- Populated by JS -->
         </select>
-        <button id="newPlaylistBtn">+ New Playlist</button>        
-    </div>
-    
-    <div id="playlistPanel" class="playlist-panel">
-        <h3 id="playlistTitle" class="playlist-title">Select or create a playlist</h3>
-        
-        <div class="song-controls">
-            <input id="songTitle" placeholder="Song Title">
-            <button id="addSongBtn">Add Song</button>
-            <input id="songUrl" placeholder="YouTube URL">
-            <button id="removeSongBtn">Remove Selected</button>
-        </div>        
-        
-        <ul id="songList" class="song-list"></ul>        
-    </div>
-    
-    <div class="actions">
-        <button id="saveBtn">Save Changes</button>
-        <button class="floating" onclick="window.location.href='./'">Back</button>
-    </div>
-    
-    <div id="statusMessage" class="status-message"></div>
-    
+
+        <button id="edit-new-playlist" class="edit-top__btn">New Playlist</button>
+        </section>
+
+        <!-- Main Panel -->
+        <section class="edit__panel edit-panel">
+        <div class="edit-panel__content" id="edit-content">
+            <!-- Populated dynamically with songs -->
+        </div>
+
+        <!-- Song Title Add/Edit Row -->
+        <div class="edit-panel__row">
+            <input type="text" id="edit-title" class="edit-panel__input" placeholder="Song Title" autocomplete="off" />
+            <button id="edit-title-btn" class="edit-panel__row-btn">Add / Edit</button>
+        </div>
+
+        <!-- Song URL Remove Row -->
+        <div class="edit-panel__row">
+            <input type="text" id="edit-url" class="edit-panel__input" placeholder="Song URL" autocomplete="off" />
+            <button id="edit-remove-btn" class="edit-panel__row-btn">Remove</button>
+        </div>
+
+        <!-- Status + Save -->
+        <div class="edit-panel__footer">
+            <span id="edit-status" class="edit-panel__status">&nbsp;</span>
+            <button id="edit-save" class="edit-panel__save">SAVE</button>
+        </div>
+        </section>
+
+    </main>
+
+    <a href="./" class="edit__back-btn back-btn">Back</a>
 </body>
 </html>
