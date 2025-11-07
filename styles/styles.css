@@ -35,6 +35,87 @@
   --grey-dark: #90a790;
 }
 
+[data-theme=discord] {
+  --bg: #1e1f22;
+  --bg-light: #2b2d31;
+  --accent: #5865f2;
+  --accent-dark: #4752c4;
+  --grey: #dbdee1;
+  --grey-dark: #949ba4;
+}
+
+[data-theme=nord] {
+  --bg: #2e3440;
+  --bg-light: #3b4252;
+  --accent: #88c0d0;
+  --accent-dark: #5e81ac;
+  --grey: #e5e9f0;
+  --grey-dark: #d8dee9;
+}
+
+[data-theme=solarized-dark] {
+  --bg: #002b36;
+  --bg-light: #073642;
+  --accent: #b58900;
+  --accent-dark: #cb4b16;
+  --grey: #eee8d5;
+  --grey-dark: #93a1a1;
+}
+
+[data-theme=synthwave] {
+  --bg: #1a0826;
+  --bg-light: #2a0e3f;
+  --accent: #ff2fd4;
+  --accent-dark: #d224b1;
+  --grey: #fceaff;
+  --grey-dark: #c38ccc;
+}
+
+[data-theme=terminal] {
+  --bg: #000000;
+  --bg-light: #0a0a0a;
+  --accent: #00ff66;
+  --accent-dark: #00cc55;
+  --grey: #00ff66;
+  --grey-dark: #00cc55;
+}
+
+[data-theme=steam] {
+  --bg: #1b2838;
+  --bg-light: #2a475e;
+  --accent: #66c0f4;
+  --accent-dark: #417a9b;
+  --grey: #c7d5e0;
+  --grey-dark: #a7bacc;
+}
+
+[data-theme=twitch] {
+  --bg: #0e0e10;
+  --bg-light: #18181b;
+  --accent: #9146ff;
+  --accent-dark: #772ce8;
+  --grey: #efeff1;
+  --grey-dark: #adadb8;
+}
+
+[data-theme=nebula] {
+  --bg: #0b0d17;
+  --bg-light: #15182b;
+  --accent: #8f73ff;
+  --accent-dark: #da46ff;
+  --grey: #d9d9e6;
+  --grey-dark: #9a9ab8;
+}
+
+[data-theme=vscode] {
+  --bg: #1e1e1e;
+  --bg-light: #252526;
+  --accent: #0a7aca;
+  --accent-dark: #005a9e;
+  --grey: #d4d4d4;
+  --grey-dark: #808080;
+}
+
 .page--dark {
   background-color: var(--bg);
   color: var(--grey);
