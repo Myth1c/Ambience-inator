@@ -209,12 +209,24 @@ function updatePlaybackAvailability(state) {
 }
 
 function autoSelectCurrentPlaylist() {
-    const current = playbackState.music.playlist_name;
-    const container = document.getElementById("playlistList");
-
-    container.querySelectorAll("button").forEach(btn => {
-        if (btn.textContent === current) {
-            btn.classList.add("selected");
-        }
-    });
+    const currentMusic = playbackState.music.playlist_name;
+    const musicContainer = document.getElementById("music-content");
+    
+    const currentAmbience = playbackState.ambience.name;
+    const ambienceContainer = document.getElementById("ambience-content");
+    
+    if (currentMusic){
+        musicContainer.querySelectorAll("button").forEach(btn => {
+            if (btn.textContent === currentMusic) {
+                btn.classList.add("selected");
+            }
+        });
+    }
+    if (currentAmbience){
+        ambienceContainer.querySelectorAll("button").forEach(btn => {
+            if (btn.textContent === currentAmbience) {
+                btn.classList.add("selected");
+            }
+        });
+    }
 }
