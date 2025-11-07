@@ -81,12 +81,12 @@
 }
 
 [data-theme=steam] {
-  --bg: #1b2838;
-  --bg-light: #2a475e;
-  --accent: #66c0f4;
-  --accent-dark: #417a9b;
-  --grey: #c7d5e0;
-  --grey-dark: #a7bacc;
+  --bg: #1b2129;
+  --bg-light: #2c323a;
+  --accent: #292f3b;
+  --accent-dark: #353a41;
+  --grey: #cccccc;
+  --grey-dark: #cae4fb;
 }
 
 [data-theme=twitch] {
