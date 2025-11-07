@@ -969,21 +969,25 @@ $font-main: "Fira Mono", monospace;
         background 0.2s ease,
         border-color 0.2s ease,
         box-shadow 0.2s ease;
+    
+    &:disabled{
+      border-color: $color-accent;
+      color: $color-accent;
+      box-shadow: 0 0 8px $color-accent;
+      background: rgba($color-accent, 0.15);
+      cursor: not-allowed;
+      opacity: 0.4;
+      
+    }
+    
+    &:hover:not(:disabled){
+      background: $color-accent-dark;
+      color: $color-bg;
+      border-color: $color-accent;
+      box-shadow: 0 0 6px $color-accent;
+    }
 }
 
-.playback-floating-vc__btn:hover:not(:disabled) {
-  background: $color-accent-dark;
-  color: $color-bg;
-  border-color: $color-accent;
-  box-shadow: 0 0 6px $color-accent;
-}
-
-.playback-floating-vc__btn:disabled {
-  border-color: $color-accent;
-  color: $color-accent;
-  box-shadow: 0 0 8px $color-accent;
-  background: rgba($color-accent, 0.15);
-}
 
 
 
