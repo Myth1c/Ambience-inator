@@ -38,6 +38,17 @@
   font-size: 1rem;
   transition: all 0.15s ease;
 }
+.nav-box__btn:disabled {
+  background: #1a1a1a;
+  border-color: #888888;
+  color: #888888;
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+  filter: grayscale(50%);
+}
 .nav-box__btn:hover {
   background: #2dc62d;
   color: #0e0e0e;

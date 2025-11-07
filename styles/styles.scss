@@ -62,6 +62,18 @@ $font-main: "Fira Mono", monospace;
     text-align: center;
     font-size: 1rem;
     transition: all 0.15s ease;
+    
+    &:disabled{
+        background: $color-bg-light;
+        border-color: $color-grey-dark;
+        color: $color-grey-dark;
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+        pointer-events: none;
+        filter: grayscale(50%);
+    }
 
     &:hover {
       background: $color-accent-dark;
