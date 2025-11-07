@@ -785,7 +785,7 @@ $font-main: "Fira Mono", monospace;
     padding: 0.5rem 1rem;
     border: 1px solid $color-accent;
     color: $color-grey;
-    background: $color-bg;
+    background: transparent;
     border-radius: 0.35rem;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -799,10 +799,11 @@ $font-main: "Fira Mono", monospace;
     }
     
     &.active-toggle{
+      background: $color-accent;
       border-color: $color-accent;
-      color: $color-accent;
-      box-shadow: 0 0 8px $color-accent;
-      background: rgba($color-accent, 0.15);
+      color: $color-bg;
+      font-weight: bold;
+      box-shadow: 0 0 10px $color-accent, 0 0 20px $color-accent-dark;
     }
     
   }
