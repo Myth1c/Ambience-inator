@@ -22,15 +22,6 @@ window.onload = async () => {
     btnStop = document.getElementById("btn-stop");
     btnReboot = document.getElementById("btn-reboot");
 
-    elBotStatus = document.getElementById("status-bot");
-    elWebStatus = document.getElementById("status-web");
-
-    // Make sure all exist:
-    if (!btnStart || !btnStop || !btnReboot || !elBotStatus || !elWebStatus) {
-        console.error("[INDEX] Some DOM elements were not found in index.html");
-        return;
-    }
-
     // === Hook up button actions ===
     btnStart.addEventListener("click", () => sendCommand("START_BOT"));
     btnStop.addEventListener("click", () => sendCommand("STOP_BOT"));
@@ -61,12 +52,16 @@ window.onReturnStatus = (statusValue) => {
 // Update UI for bot + webserver status
 // ========================
 function updateBotStatus(webOK, botStatus) {
-    // --- DOM not ready yet: prevent crashes ---
-    if (!btnStart || !btnStop || !btnReboot || !elBotStatus || !elWebStatus) {
-        console.warn("[INDEX] updateBotStatus called before elements were ready.");
-        return;
-    }
+ 
+    const btnStart = document.getElementById("btn-start");
+    const btnStop = document.getElementById("btn-stop");
+    const btnReboot = document.getElementById("btn-reboot");
 
+    const elBotStatus = document.getElementById("status-bot");
+    const elWebStatus = document.getElementById("status-web");
+
+    
+    
     // Normalize botStatus
     if (botStatus === true) botStatus = "online";
     else if (botStatus === false) botStatus = "offline";
