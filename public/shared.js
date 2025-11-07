@@ -150,9 +150,9 @@ function handleIncomingCommand(data) {
             const state = data.payload || data.state;
             updatePlaybackState(state);
 
-        case "bot_hello":
-            if (typeof window.onReturnStatus === "function")
-                window.onReturnStatus("online");
+        case "bot_ready":
+            if (typeof window.onBotReady === "function")
+                window.onBotReady(data);
             break;
         
         // === Broadcasts / server messages ===
