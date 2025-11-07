@@ -23,6 +23,11 @@ let playbackState = {
     in_vc: false
 };
 
+(function loadSavedTheme() {
+    const saved = localStorage.getItem("ai-theme") || "green";
+    document.documentElement.setAttribute("data-theme", saved);
+})();
+
 // === Auth helper ===
 async function authCheck() {
 
