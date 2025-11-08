@@ -31,7 +31,7 @@ let READ_ONLY_COMMANDS = [
     "GET_AMBIENCE",
     "GET_PLAYBACK_STATE",
     "GET_BOT_STATUS"
-]
+];
 
 
 (function loadSavedTheme() {
