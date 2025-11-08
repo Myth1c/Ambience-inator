@@ -202,6 +202,7 @@ function handleIncomingCommand(data) {
 
 // === Send command to bot backend ===
 function sendCommand(command, data = {}) {
+    console.log(`[WEB-DEBUG] Is user authorized? ${window.isAuthorized}`);
     if (!window.isAuthorized) {
             console.warn(`[WEB] Unauthorized user tried sending unauthorized command: ${command}`);
         if (!READ_ONLY_COMMANDS.includes(command)){
