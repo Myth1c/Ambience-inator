@@ -875,6 +875,15 @@
   gap: 0.75rem;
   z-index: 9999;
 }
+.playback-floating-vc.disabled-panel {
+  opacity: 0.4;
+  filter: grayscale(50%);
+  pointer-events: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
 
 .playback-floating-vc__btn {
   background: var(--bg-light);
