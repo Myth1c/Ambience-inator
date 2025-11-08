@@ -6,6 +6,8 @@ const WS_URL = "wss://ambienceinator-web.onrender.com/ws";
 
 // === Global State ===
 let ws;
+let authorized = false;
+
 let playbackState = {
     music: { 
         playlist_name: "None",
@@ -24,7 +26,6 @@ let playbackState = {
     bot_online: "offline"
 };
 
-let authorized = false;
 
 let READ_ONLY_COMMANDS = [
     "GET_PLAYLISTS",
@@ -41,7 +42,7 @@ let READ_ONLY_COMMANDS = [
 
 // === Auth helper ===
 async function authCheck() {
-    window.authorized = false;  // default
+    window.isAuthorized = false;  // default
     try {
         const res = await fetch(`${API_BASE}/auth_check`, {
             method: "POST",
@@ -61,18 +62,18 @@ async function authCheck() {
         // Server responded — now check the auth result
         if (data.ok === true) {
             console.log("[WEB] Authenticated");
-            window.authorized = true;
+            window.isAuthorized = true;
             return true;
         } else {
             console.log("[WEB] Not authenticated");
-            window.authorized = false;
+            window.isAuthorized = false;
             return false;
         }
 
     } catch (err) {
         // Only log REAL failures such as server offline, CORS issues, etc
         console.error("[WEB] Auth check error:", err);
-        window.authorized = false;
+        window.isAuthorized = false;
         return false;
     }
 }
