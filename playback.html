@@ -9,7 +9,7 @@
     <script src="public/playback.js" defer></script>
     
 </head>
-<body class="page page--dark">
+<body class="page page--dark page-playback">
     <main class="playback">
 
         <section class="playback__panels playback-panels">
@@ -68,7 +68,32 @@
         <button id="vc-join" class="playback-floating-vc__btn">Join VC</button>
         <button id="vc-leave" class="playback-floating-vc__btn">Leave VC</button>
     </div>
+    
+    <!-- AUTH OVERLAY (Global) -->
+    <div id="auth-overlay" class="auth-overlay hidden">
+        <div class="auth-modal">
+            <h2 class="auth-modal__title">Authorization Required</h2>
 
-    <a href="./" class="playback__back-btn back-btn">Back</a>
+            <label for="auth-input" class="auth-modal__label">Access Key</label>
+            <input id="auth-input" type="password" class="auth-modal__input" />
+
+            <div class="auth-modal__buttons">
+                <button id="auth-submit" class="auth-modal__btn">Submit</button>
+                <button id="auth-cancel" class="auth-modal__btn auth-modal__btn--cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH FLOATING BUTTON -->
+    <button id="auth-float-btn" class="corner-btn auth-float-btn hidden">Auth</button>
+
+    <script src="public/auth_overlay.js" defer></script>
+
+    <a href="./">
+        <button class="corner-btn back-btn" type="button">Back</button>
+    </a>
+    
+    <div id="global-status" class="global-status"></div>
+
 </body>
 </html>

@@ -24,6 +24,8 @@ let playbackState = {
     bot_online: "offline"
 };
 
+let authorized = false;
+
 (function loadSavedTheme() {
     const saved = localStorage.getItem("ai-theme") || "green";
     document.documentElement.setAttribute("data-theme", saved);
@@ -45,10 +47,11 @@ async function authCheck() {
         if (!data.ok) throw new Error("Auth denied");
 
         console.log("[WEB] Auth successful");
+        authorized = true
         return true;
     } catch (err) {
         console.error("[WEB] Auth error:", err);
-        window.location.href = "./auth.html";
+        authorized = false;
         return false;
     }
 }
@@ -178,6 +181,11 @@ function handleIncomingCommand(data) {
 
 // === Send command to bot backend ===
 function sendCommand(command, data = {}) {
+    if (!window.isAuthorized) {
+        showStatus("Authorization required to send commands.", "warning", null, 10000);
+        return;
+    }
+    
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ command, ...data }));
     } else {
@@ -265,10 +273,15 @@ function resetPlaybackState(){
 
 // ==== Status updates for pages which modify data ====
 
-function showStatus(message, type = "success", statusElement = null){
+function showStatus(message, type = "success", statusElement = null, timeout = 2500){
     
+    // Use global floating status if no specific element is provided
     if (statusElement === null) {
-        console.log(`[WS] Sent showStatus with an invalid element to update.`);
+        statusElement = document.getElementById("global-status");
+    }
+
+    if (!statusElement) {
+        console.warn("[WEB] No status element available.");
         return;
     }
     
@@ -286,7 +299,7 @@ function showStatus(message, type = "success", statusElement = null){
     // Automatically fade out after 2.5s
     setTimeout(() => {
         statusElement.classList.remove("show");
-    }, 2500);
+    }, timeout);
     
 }
 
@@ -294,7 +307,10 @@ function showStatus(message, type = "success", statusElement = null){
 window.addEventListener("load", () => {
     if (!window.ws || window.ws.readyState > 1) {
         connectWebSocket();
-        startHeartbeat(300000)
+        startHeartbeat(300000);
+        
+        const g = document.getElementById("global-status");
+        if (g) g.classList.remove("show");
     }
 });
 
@@ -328,6 +344,7 @@ window.API_BASE = API_BASE;
 window.WS_URL = WS_URL;
 window.ws = ws;
 window.playbackState = playbackState;
+window.isAuthorized = authorized;
 window.sendCommand = sendCommand;
 window.authCheck = authCheck;
 window.connectWebSocket = connectWebSocket;
