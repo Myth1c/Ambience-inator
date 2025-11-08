@@ -207,7 +207,7 @@ function sendCommand(command, data = {}) {
             console.warn(`[WEB] Unauthorized user tried sending unauthorized command: ${command}`);
         if (!READ_ONLY_COMMANDS.includes(command)){
             console.warn("[WEB] User did not send a command in READ_ONLY_COMMAND");
-            showStatus("Authorization required to use that feature", "warning", null, 10000);
+            showStatus("Authorization required to use that feature.", "warning", null, 10000);
             return;
         }
     }
@@ -298,7 +298,6 @@ function resetPlaybackState(){
 }
 
 // ==== Status updates for pages which modify data ====
-
 function showStatus(message, type = "success", statusElement = null, timeout = 2500){
     console.log(`[WEB] Attempting to show a status message`);
     // Use global floating status if no specific element is provided
@@ -314,7 +313,12 @@ function showStatus(message, type = "success", statusElement = null, timeout = 2
     statusElement.textContent = message;
     
     // Reset classes
-    statusElement.className = "status-message";
+    statusElement.classList.remove(
+        "status-success",
+        "status-warning",
+        "status-error"
+    );
+
     if (type === "success") statusElement.classList.add("status-success");
     if (type === "warning") statusElement.classList.add("status-warning");
     if (type === "error") statusElement.classList.add("status-error");
