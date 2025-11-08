@@ -35,6 +35,7 @@ window.onload = async () => {
 
     // ==== VC BUTTONS ====
     document.getElementById("vc-join").onclick = () => {
+        console.log("[WEB-DEBUG] Join VC button pressed!")
         if (!window.playbackState.in_vc) sendCommand("JOINVC");
     };
 
