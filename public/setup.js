@@ -52,25 +52,10 @@ window.onload = async () => {
         themeStatus.textContent = `Theme set to ${themeName}`;
     }
 
-    function applyPreview(themeName) {
-        // Temporarily apply theme to compute preview values
-        document.documentElement.setAttribute("data-theme", themeName);
-
-        const styles = getComputedStyle(document.documentElement);
-
-        previewInput.style.background = styles.getPropertyValue("--bg-light");
-        previewInput.style.color = styles.getPropertyValue("--grey");
-        previewInput.style.borderColor = styles.getPropertyValue("--accent");
-
-        previewBtn.style.borderColor = styles.getPropertyValue("--accent");
-        previewBtn.style.color = styles.getPropertyValue("--grey");
-        previewBtn.style.background = "transparent";
-    }
-
     // Theme dropdown change event
     themeSelect.addEventListener("change", () => {
         const themeName = themeSelect.value;
-        applyPreview(themeName);
+        document.documentElement.setAttribute("data-theme", themeName);
     });
     
     document.getElementById("theme-apply").addEventListener("click", () => {
@@ -85,10 +70,4 @@ window.onload = async () => {
         themeStatus.textContent = `Theme applied: ${themeName}`;
     });
 
-    // Restore theme on load
-    const savedTheme = localStorage.getItem("ai-theme") || "green";
-    themeSelect.value = savedTheme;
-
-    applyTheme(savedTheme);
-    applyPreview(savedTheme);
 };
