@@ -70,4 +70,8 @@ window.onload = async () => {
         themeStatus.textContent = `Theme applied: ${themeName}`;
     });
 
+    // Restore theme on load
+    const savedTheme = localStorage.getItem("ai-theme") || "green";
+    themeSelect.value = savedTheme;
+
 };
