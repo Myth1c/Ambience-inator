@@ -188,7 +188,7 @@ function updatePlaybackAvailability(state) {
 
     const musicPanel = document.querySelector(".playback-panel--music");
     const ambiencePanel = document.querySelector(".playback-panel--ambience");
-    const vcPanel = document.querySelector(".playback-vc");
+    const vcPanel = document.querySelector(".playback-floating-vc");
 
     if (!online) {
         musicPanel.classList.add("disabled-panel");
