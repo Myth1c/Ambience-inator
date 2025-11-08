@@ -74,32 +74,46 @@ function updateBotStatus(webOK) {
     const elWebStatus = document.getElementById("status-web");
 
     // Bot status comes from playbackState
-    let botStatus = window.playbackState.bot_online;
+    botStatus = window.playbackState.bot_online;
 
-    // Normalize botStatus to a valid string
-    if (botStatus === true) botStatus = "online";
-    else if (botStatus === false) botStatus = "offline";
-    else if (typeof botStatus !== "string") botStatus = "offline";
-
+    // Reset status lists
+    elWebStatus.classList.remove(
+        "status--ok",
+        "status--warn",
+        "status--err"
+    );
+    
+    elBotStatus.classList.remove(
+        "status--ok",
+        "status--warn",
+        "status--err"
+    );
+    
     // --- Webserver ---
-    elWebStatus.textContent = webOK ? "Online" : "Offline";
-    elWebStatus.style.color = webOK ? "#4caf50" : "#f44336";
-
+    if(webOK){
+        elWebStatus.textContent = "Online";
+        elWebStatus.classList.add("status--ok");
+    }else{
+        elWebStatus.textContent = "Offline";
+        elWebStatus.classList.add("status--err");
+    }
+    
+    
     // --- Bot status display ---
     switch (botStatus) {
         case "online":
             elBotStatus.textContent = "Online";
-            elBotStatus.style.color = "#4caf50";
+            elBotStatus.classList.add("status--ok");
             break;
 
         case "booting":
-            elBotStatus.textContent = "Starting...";
-            elBotStatus.style.color = "#ffca28";
+            elBotStatus.textContent = "Booting...";
+            elBotStatus.classList.add("status--warn");
             break;
 
         default:
             elBotStatus.textContent = "Offline";
-            elBotStatus.style.color = "#f44336";
+            elBotStatus.classList.add("status--err");
             break;
     }
 
