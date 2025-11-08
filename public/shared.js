@@ -26,6 +26,14 @@ let playbackState = {
 
 let authorized = false;
 
+let READ_ONLY_COMMANDS = [
+    "GET_PLAYLISTS",
+    "GET_AMBIENCE",
+    "GET_PLAYBACK_STATE",
+    "GET_BOT_STATUS"
+]
+
+
 (function loadSavedTheme() {
     const saved = localStorage.getItem("ai-theme") || "green";
     document.documentElement.setAttribute("data-theme", saved);
@@ -182,8 +190,10 @@ function handleIncomingCommand(data) {
 // === Send command to bot backend ===
 function sendCommand(command, data = {}) {
     if (!window.isAuthorized) {
-        showStatus("Authorization required to send commands.", "warning", null, 10000);
-        return;
+        if (!READ_ONLY_COMMANDS.includes(command)){
+            showStatus("Authorization required to use that feature", "warning", null, 10000);
+            return;
+        }
     }
     
     if (ws && ws.readyState === WebSocket.OPEN) {
