@@ -98,7 +98,7 @@ function handleIncomingCommand(data) {
         // === Command responses ===
         case "response":
             if (!data.ok) {
-                console.warn(`[WS] Command '${cmd}' failed:`, data.error);
+                console.warn(`[WS] Command '${cmd}' failed:`, data.error, `\nFull Data Preview ${JSON.stringify(data)}`);
                 if (typeof window.onCommandError === "function")
                     window.onCommandError(cmd, data.error);
                 return;
