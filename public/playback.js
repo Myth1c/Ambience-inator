@@ -6,6 +6,102 @@
 let playlists = {};
 let ambience = {};
 
+    
+// =====================
+// Delegated CLICK events
+// =====================
+document.body.addEventListener("click", (e) => {
+    switch (e.target.id) {
+        case "vc-join":
+            if (!window.playbackState.in_vc)
+                sendCommand("JOINVC");
+            break;
+        case "vc-leave":
+            if (window.playbackState.in_vc)
+                sendCommand("LEAVEVC");
+            break;
+        case "ambience-playpause":
+            togglePlayback("ambience");
+            break;
+        case "music-playpause":
+            togglePlayback("music");
+            break;
+        case "music-prev":
+            sendCommand("PREVIOUS_SONG");
+            break;
+        case "music-skip":
+            sendCommand("NEXT_SONG");
+            break;
+        case "music-shuffle":
+            sendCommand("SET_SHUFFLE", {
+                enabled: !window.playbackState.music.shuffle
+            });
+            break;
+        case "music-loop":
+            sendCommand("SET_LOOP", {
+                enabled: !window.playbackState.music.loop
+            });
+            break;
+    }
+});
+// =====================
+// Delegated INPUT events (for sliders)
+// =====================
+document.body.addEventListener("input", (e) => {
+    switch (e.target.id) {
+        case "ambience-volume":
+            sendCommand("SET_VOLUME_AMBIENCE", {
+                volume: parseInt(e.target.value)
+            });
+            break;
+        case "music-volume":
+            sendCommand("SET_VOLUME_MUSIC", {
+                volume: parseInt(e.target.value)
+            });
+            break;
+    }
+});
+
+// =====================
+// Delegated CLICK for playlist/ambience lists
+// =====================
+document.body.addEventListener("click", (e) => {
+    const btn = e.target.closest(".playlist-item");
+    if (!btn) return;
+    const action = btn.dataset.action;
+    // ============================
+    // Music playlist click
+    // ============================
+    if (action === "play-playlist") {
+        const name = btn.dataset.name;
+        const container = document.getElementById("music-content");
+        // Clear prior selection
+        container.querySelectorAll("button.selected").forEach(el =>
+            el.classList.remove("selected")
+        );
+        // Apply new selection
+        btn.classList.add("selected");
+        sendCommand("PLAY_PLAYLIST", { name });
+        return;
+    }
+    // ============================
+    // Ambience click
+    // ============================
+    if (action === "play-ambience") {
+        const title = btn.dataset.title;
+        const url = btn.dataset.url;
+        const container = document.getElementById("ambience-content");
+        // Clear prior selection
+        container.querySelectorAll("button.selected").forEach(el =>
+            el.classList.remove("selected")
+        );
+        btn.classList.add("selected");
+        sendCommand("PLAY_AMBIENCE", { url, title });
+        return;
+    }
+});
+
+
 // ========================
 // ON PAGE LOAD
 // ========================
@@ -13,36 +109,6 @@ window.onload = async () => {
     const authed = await authCheck();
     if (!authed) return;
 
-    // ==== MUSIC BUTTONS ====
-    document.getElementById("music-playpause").onclick = () => togglePlayback("music");
-    document.getElementById("music-prev").onclick = () => sendCommand("PREVIOUS_SONG");
-    document.getElementById("music-skip").onclick = () => sendCommand("NEXT_SONG");
-    document.getElementById("music-shuffle").onclick = () =>
-        sendCommand("SET_SHUFFLE", { enabled: !window.playbackState.music.shuffle });
-    document.getElementById("music-loop").onclick = () =>
-        sendCommand("SET_LOOP", { enabled: !window.playbackState.music.loop });
-
-    document.getElementById("music-volume").oninput = e => {
-        sendCommand("SET_VOLUME_MUSIC", { volume: parseInt(e.target.value) });
-    };
-
-    // ==== AMBIENCE BUTTONS ====
-    document.getElementById("ambience-playpause").onclick = () => togglePlayback("ambience");
-
-    document.getElementById("ambience-volume").oninput = e => {
-        sendCommand("SET_VOLUME_AMBIENCE", { volume: parseInt(e.target.value) });
-    };
-
-    // ==== VC BUTTONS ====
-    document.getElementById("vc-join").onclick = () => {
-        console.log("[WEB-DEBUG] Join VC button pressed!")
-        if (!window.playbackState.in_vc) sendCommand("JOINVC");
-    };
-
-    document.getElementById("vc-leave").onclick = () => {
-        if (window.playbackState.in_vc) sendCommand("LEAVEVC");
-    };
-    
     updatePlaybackAvailability();
 };
 
@@ -98,15 +164,11 @@ function populatePlaylistList() {
         const btn = document.createElement("button");
         btn.classList.add("playlist-item");
         btn.textContent = name;
-        btn.onclick = () => {
-            // Remove previous selection
-            container.querySelectorAll("button.selected").forEach(el =>
-                el.classList.remove("selected")
-            );
-            // Apply new selection
-            btn.classList.add("selected");
-            sendCommand("PLAY_PLAYLIST", { name });
-        }
+        
+        // Tag for delegate handler
+        btn.dataset.action = "play-playlist";
+        btn.dataset.name = name;
+
         container.appendChild(btn);
     });
 }
@@ -119,15 +181,12 @@ function populateAmbienceList() {
         const btn = document.createElement("button");
         btn.classList.add("playlist-item");
         btn.textContent = title;
-        btn.onclick = () => {
-            // Remove previous selection
-            container.querySelectorAll("button.selected").forEach(el =>
-                el.classList.remove("selected")
-            );
-            // Apply new selection
-            btn.classList.add("selected");
-            sendCommand("PLAY_AMBIENCE", { url, title });
-        }
+        
+        // Tag for delegate handler
+        btn.dataset.action = "play-ambience";
+        btn.dataset.url = url;
+        btn.dataset.title = title;
+        
         container.appendChild(btn);
     }
 }
