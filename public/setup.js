@@ -73,13 +73,13 @@ function applyTheme(themeName) {
 // ========================
 // PAGE LOAD
 // ========================
-window.onload = async () => {
-
-    // 1. Run auth check
+document.addEventListener("DOMContentLoaded", async () => {
+    
+    // Run auth check
     const authed = await authCheck();
     if (!authed) return;
 
-    // 2. Cache DOM elements
+    // Cache DOM elements
     setupEls.inputText    = document.getElementById("setup-text");
     setupEls.inputVoice   = document.getElementById("setup-voice");
     setupEls.status       = document.getElementById("setup-status");
@@ -91,8 +91,9 @@ window.onload = async () => {
         if (!el) console.warn(`[SETUP] Missing DOM element for ${key}`);
     }
 
-    // 3. Restore saved theme
+    // Restore saved theme
     const savedTheme = localStorage.getItem("ai-theme") || "green";
     setupEls.themeSelect.value = savedTheme;
     applyTheme(savedTheme);
-};
+    
+});
