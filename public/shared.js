@@ -203,7 +203,9 @@ function handleIncomingCommand(data) {
 // === Send command to bot backend ===
 function sendCommand(command, data = {}) {
     if (!window.isAuthorized) {
+            console.warn(`[WEB] Unauthorized user tried sending unauthorized command: ${command}`);
         if (!READ_ONLY_COMMANDS.includes(command)){
+            console.warn("[WEB] User did not send a command in READ_ONLY_COMMAND");
             showStatus("Authorization required to use that feature", "warning", null, 10000);
             return;
         }
@@ -297,7 +299,7 @@ function resetPlaybackState(){
 // ==== Status updates for pages which modify data ====
 
 function showStatus(message, type = "success", statusElement = null, timeout = 2500){
-    
+    console.log(`[WEB] Attempting to show a status message`);
     // Use global floating status if no specific element is provided
     if (statusElement === null) {
         statusElement = document.getElementById("global-status");
