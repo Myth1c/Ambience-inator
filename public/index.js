@@ -2,36 +2,51 @@
 // index.js — Updated for BEM + new HTML
 // ========================
 
-// Cached button references
-let btnStart, btnStop, btnReboot;
-
-// Cached status labels
-let elBotStatus, elWebStatus;
+// Cached status labels + global state
+let elBotStatus   = null;
+let elWebStatus   = null;
 
 // ========================
-// Init
+// EVENT DELEGATION — CLICK
+// ========================
+document.body.addEventListener("click", (e) => {
+    switch (e.target.id) {
+
+        case "btn-start":
+            sendCommand("START_BOT");
+            break;
+
+        case "btn-stop":
+            sendCommand("STOP_BOT");
+            break;
+
+        case "btn-reboot":
+            sendCommand("REBOOT_BOT");
+            break;
+    }
+});
+
+// ========================
+// PAGE LOAD
 // ========================
 window.onload = async () => {
 
-    // === Auth check ===
+    // --- Auth check ---
     const authed = await authCheck();
     if (!authed) return;
 
-    // === Query DOM Elements ===
-    btnStart = document.getElementById("btn-start");
-    btnStop = document.getElementById("btn-stop");
-    btnReboot = document.getElementById("btn-reboot");
+    // --- Cache DOM references ---
+    elBotStatus = document.getElementById("status-bot");
+    elWebStatus = document.getElementById("status-web");
 
-    // === Hook up button actions ===
-    btnStart.addEventListener("click", () => sendCommand("START_BOT"));
-    btnStop.addEventListener("click", () => sendCommand("STOP_BOT"));
-    btnReboot.addEventListener("click", () => sendCommand("REBOOT_BOT"));
+    if (!elBotStatus || !elWebStatus) {
+        console.warn("[INDEX] Missing status elements");
+    }
 
-    // === Request initial bot status once WS connects ===
+    // --- Request initial status once WS connects ---
     window.onWebSocketConnected = () => {
         sendCommand("GET_BOT_STATUS");
     };
-
 };
 
 // ========================
@@ -42,36 +57,35 @@ window.onHeartbeatUpdate = (webOK, botOK) => {
 };
 
 window.onReturnStatus = (statusValue) => {
-    // If we’re receiving this response, the webserver is definitely online
-    const webOK = true;
-
-    updateBotStatus(webOK);
+    // If server responded, then web is definitely online
+    updateBotStatus(true);
 };
 
 // ========================
-// Update UI for bot + webserver status
+// UI UPDATE FUNCTION
 // ========================
 function updateBotStatus(webOK) {
- 
-    const btnStart = document.getElementById("btn-start");
-    const btnStop = document.getElementById("btn-stop");
+
+    const btnStart  = document.getElementById("btn-start");
+    const btnStop   = document.getElementById("btn-stop");
     const btnReboot = document.getElementById("btn-reboot");
 
     const elBotStatus = document.getElementById("status-bot");
     const elWebStatus = document.getElementById("status-web");
 
-    botStatus = window.playbackState.bot_online;
-    
-    // Normalize botStatus
+    // Bot status comes from playbackState
+    let botStatus = window.playbackState.bot_online;
+
+    // Normalize botStatus to a valid string
     if (botStatus === true) botStatus = "online";
     else if (botStatus === false) botStatus = "offline";
     else if (typeof botStatus !== "string") botStatus = "offline";
 
-    // --- Webserver status ---
+    // --- Webserver ---
     elWebStatus.textContent = webOK ? "Online" : "Offline";
     elWebStatus.style.color = webOK ? "#4caf50" : "#f44336";
 
-    // --- Bot status ---
+    // --- Bot status display ---
     switch (botStatus) {
         case "online":
             elBotStatus.textContent = "Online";
@@ -99,4 +113,3 @@ function updateBotStatus(webOK) {
 
     console.log(`[STATUS] Web=${webOK ? "Online" : "Offline"} | Bot=${botStatus}`);
 }
-

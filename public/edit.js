@@ -2,54 +2,83 @@
 // edit.js — Updated for new HTML (BEM structure)
 // ========================
 
-let editMode = "music";         // "music" or "ambience"
-let playlists = {};             // Loaded playlists
-let currentPlaylist = null;     // Currently selected playlist name
-let selectedSongUrl = null;     // Used for editing/removing tracks
+let editMode = "music";         
+let playlists = {};             
+let currentPlaylist = null;     
+let selectedSongUrl = null;     
 
 
 // ========================
-// ON PAGE LOAD
+// GLOBAL CLICK DELEGATION
+// ========================
+document.body.addEventListener("click", (e) => {
+
+    const id = e.target.id;
+
+    // --- Mode Switch ---
+    if (id === "edit-mode-music") {
+        switchMode("music");
+        return;
+    }
+    if (id === "edit-mode-ambience") {
+        switchMode("ambience");
+        return;
+    }
+
+    // --- Controls ---
+    if (id === "edit-new-playlist") {
+        createNewPlaylist();
+        return;
+    }
+    if (id === "edit-title-btn") {
+        addOrEditSong();
+        return;
+    }
+    if (id === "edit-remove-btn") {
+        removeSong();
+        return;
+    }
+    if (id === "edit-save") {
+        saveChanges();
+        return;
+    }
+
+    // --- Playlist item selection (delegated) ---
+    if (e.target.classList.contains("playlist-item")) {
+        const row = e.target;
+        const url = row.dataset.url;
+        const title = row.dataset.title;
+
+        if (url && title) {
+            selectSong(url, title, row);
+        }
+    }
+});
+
+
+// ========================
+// GLOBAL CHANGE DELEGATION
+// ========================
+document.body.addEventListener("change", (e) => {
+    if (e.target.id === "edit-playlist-select") {
+        loadPlaylist(e.target.value);
+    }
+});
+
+
+// ========================
+// PAGE LOAD
 // ========================
 window.onload = async () => {
-
     const authed = await authCheck();
     if (!authed) return;
 
-    // ========== DOM ELEMENTS ==========
-    const btnMusicMode   = document.getElementById("edit-mode-music");
-    const btnAmbMode     = document.getElementById("edit-mode-ambience");
-
-    const selectPlaylist = document.getElementById("edit-playlist-select");
-    const btnNewPlaylist = document.getElementById("edit-new-playlist");
-
-    const inputTitle     = document.getElementById("edit-title");
-    const inputURL       = document.getElementById("edit-url");
-    const btnAddEdit     = document.getElementById("edit-title-btn");
-    const btnRemove      = document.getElementById("edit-remove-btn");
-    const btnSave        = document.getElementById("edit-save");
-
-    // ========== MODE SWITCH ==========
-    btnMusicMode.addEventListener("click", () => switchMode("music"));
-    btnAmbMode.addEventListener("click",   () => switchMode("ambience"));
-
-    // ========== TOP BAR CONTROLS ==========
-    btnNewPlaylist.addEventListener("click", createNewPlaylist);
-
-    // ========== SONG CONTROLS ==========
-    btnAddEdit.addEventListener("click", addOrEditSong);
-    btnRemove.addEventListener("click", removeSong);
-
-    // ========== SAVE ==========
-    btnSave.addEventListener("click", saveChanges);
-
-    // First load → get music playlists
     sendCommand("GET_PLAYLISTS");
 };
 
 
 // ========================
-// WEBSOCKET CALLBACKS
+// WS CALLBACKS
 // ========================
 window.onReturnPlaylists = (playlistData) => {
     playlists = playlistData || {};
@@ -71,16 +100,10 @@ window.onReturnAmbience = (ambienceData) => {
     showStatus("Ambience loaded.", "success", document.getElementById("edit-status"));
 };
 
-// Called after saving
-window.onReturnPlaylistSave = (data) => {
-    showStatus("Playlist saved!", "success", document.getElementById("edit-status"));
-};
+window.onReturnPlaylistSave = () => showStatus("Playlist saved.", "success", document.getElementById("edit-status"));
 
-window.onReturnAmbienceSave = (data) => {
-    showStatus("Ambience saved!", "success", document.getElementById("edit-status"));
-};
+window.onReturnAmbienceSave = () => showStatus("Ambience saved.", "success", document.getElementById("edit-status"));
 
-// Request playlists when WS connects
 window.onWebSocketConnected = () => {
     if (editMode === "music") sendCommand("GET_PLAYLISTS");
     else sendCommand("GET_AMBIENCE");
@@ -97,16 +120,16 @@ function switchMode(mode) {
     currentPlaylist = null;
     selectedSongUrl = null;
 
-    const btnMusic = document.getElementById("edit-mode-music");
-    const btnAmb   = document.getElementById("edit-mode-ambience");
-
-    btnMusic.classList.toggle("edit-mode__btn--active", mode === "music");
-    btnAmb.classList.toggle("edit-mode__btn--active",   mode === "ambience");
+    // Button highlight
+    document.getElementById("edit-mode-music")
+        .classList.toggle("edit-mode__btn--active", mode === "music");
+    document.getElementById("edit-mode-ambience")        
+        .classList.toggle("edit-mode__btn--active", mode === "ambience");
 
     const select = document.getElementById("edit-playlist-select");
     const btnNewPlaylist = document.getElementById("edit-new-playlist");
 
-    // Clear list
+    // Clear panel
     document.getElementById("edit-content").innerHTML = "";
 
     if (mode === "music") {
@@ -115,6 +138,7 @@ function switchMode(mode) {
 
         select.innerHTML = `<option disabled selected>--- Choose a playlist ---</option>`;
         sendCommand("GET_PLAYLISTS");
+
     } else {
         select.disabled = true;
         btnNewPlaylist.disabled = true;
@@ -126,7 +150,7 @@ function switchMode(mode) {
 
 
 // ========================
-// POPULATE PLAYLIST SELECT
+// POPULATE PLAYLIST DROPDOWN
 // ========================
 function populatePlaylistSelect() {
     const select = document.getElementById("edit-playlist-select");
@@ -138,8 +162,6 @@ function populatePlaylistSelect() {
         opt.textContent = name;
         select.appendChild(opt);
     }
-
-    select.onchange = () => loadPlaylist(select.value);
 }
 
 
@@ -161,14 +183,19 @@ function loadPlaylist(name) {
         row.classList.add("playlist-item");
         row.textContent = `${title}  —  ${url}`;
 
-        row.addEventListener("click", () => selectSong(url, title, row));
+        // store values in dataset for delegation
+        row.dataset.url = url;
+        row.dataset.title = title;
 
         panel.appendChild(row);
     }
 }
 
+
+// ========================
+// SONG SELECTION
+// ========================
 function selectSong(url, title, row) {
-    // Remove previous selection
     document.querySelectorAll(".edit-panel__item--selected")
         .forEach(el => el.classList.remove("edit-panel__item--selected"));
 
@@ -210,7 +237,7 @@ function addOrEditSong() {
     const url   = document.getElementById("edit-url").value.trim();
 
     if (!title || !url) {
-        alert("Enter both a title and URL.");
+        alert("Enter a title and URL.");
         return;
     }
 
@@ -219,31 +246,18 @@ function addOrEditSong() {
     // Editing?
     if (selectedSongUrl && list[selectedSongUrl]) {
 
-        // If URL changed → remove old entry
+        // URL changed?
         if (selectedSongUrl !== url) {
             delete list[selectedSongUrl];
         }
 
         list[url] = title;
-    } 
-    else {
+    } else {
         list[url] = title;
     }
 
     loadPlaylist(currentPlaylist);
     clearSelectionFields();
-}
-
-function clearSelectionFields() {
-    selectedSongUrl = null;
-
-    document.querySelectorAll(".edit-panel__item--selected")
-        .forEach(el => el.classList.remove("edit-panel__item--selected"));
-
-    document.getElementById("edit-title").value = "";
-    document.getElementById("edit-url").value = "";
-
-    document.getElementById("edit-title-btn").textContent = "Add / Edit";
 }
 
 
@@ -262,7 +276,23 @@ function removeSong() {
 
 
 // ========================
-// SAVE PLAYLISTS
+// CLEAR SELECTION FIELDS
+// ========================
+function clearSelectionFields() {
+    selectedSongUrl = null;
+
+    document.querySelectorAll(".edit-panel__item--selected")
+        .forEach(el => el.classList.remove("edit-panel__item--selected"));
+
+    document.getElementById("edit-title").value = "";
+    document.getElementById("edit-url").value = "";
+
+    document.getElementById("edit-title-btn").textContent = "Add / Edit";
+}
+
+
+// ========================
+// SAVE CHANGES
 // ========================
 function saveChanges() {
     const statusEl = document.getElementById("edit-status");
@@ -272,19 +302,16 @@ function saveChanges() {
             showStatus("Select a playlist first.", "warning", statusEl);
             return;
         }
-
         sendCommand("SAVE_PLAYLIST", {
             name: currentPlaylist,
             data: playlists[currentPlaylist]
         });
-
         showStatus(`Saving "${currentPlaylist}"...`, "success", statusEl);
 
     } else {
         sendCommand("SAVE_AMBIENCE", {
             data: playlists["Ambience"]
         });
-
         showStatus("Saving Ambience...", "success", statusEl);
     }
 }
